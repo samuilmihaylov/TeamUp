@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">TeamUp</string>
+    <string name="btn_sign_in">Sign in</string>
+    <string name="btn_sign_up">Register</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="btn_link_to_login">Already signed up? Login in</string>
+    <string name="btn_link_to_register">Not signed up? Sign up now</string>
+    <string name="btn_forgot_password">Forgot your password?</string>
+    <string name="btn_sign_out">Sign Out</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
+    <string-array name="nav_array">
+        <item>Home</item>
+        <item>Sign in</item>
+        <item>Sing up</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
