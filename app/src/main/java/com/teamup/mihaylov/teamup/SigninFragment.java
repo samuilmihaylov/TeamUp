@@ -1,0 +1,108 @@
+package com.teamup.mihaylov.teamup;
+
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class SigninFragment extends Fragment {
+
+    private Button mBtnSignIn;
+    private Button mBtnSignUp;
+    private Button mBtnResetPassword;
+    private EditText mInputEmail;
+    private EditText mInputPassword;
+    private ProgressBar mProgressBar;
+    private FirebaseAuth mAuth;
+
+    private Button.OnClickListener mBtnSignInListener = new Button.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+        }
+    };
+
+    private Button.OnClickListener mBtnSignUpListener = new Button.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Fragment signupFragment = new SignupFragment();
+
+            getActivity().setTitle("Sign un");
+
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.content_frame, signupFragment)
+                    .commit();
+        }
+    };
+
+    private Button.OnClickListener mBtnResetPasswordListener = new Button.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+        }
+    };
+
+
+    public SigninFragment() {
+        // Required empty public constructor
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view =  inflater.inflate(R.layout.fragment_signin, container, false);
+
+        mAuth = FirebaseAuth.getInstance();
+
+        if (mAuth.getCurrentUser() != null) {
+            Fragment homeFragment = new HomeFragment();
+
+            getActivity().setTitle(mAuth.getCurrentUser().getEmail());
+
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.content_frame, homeFragment)
+                    .commit();
+        }
+
+        mInputEmail = (EditText) view.findViewById(R.id.input_email);
+        mInputPassword = (EditText) view.findViewById(R.id.input_password);
+
+        mBtnSignIn = (Button) view.findViewById(R.id.btn_sign_in);
+        mBtnSignUp = (Button) view.findViewById(R.id.btn_sign_up);
+        mBtnResetPassword = (Button) view.findViewById(R.id.btn_reset_password);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+
+        mBtnSignIn.setOnClickListener(mBtnSignInListener);
+        mBtnSignUp.setOnClickListener(mBtnSignUpListener);
+        mBtnResetPassword.setOnClickListener(mBtnResetPasswordListener);
+
+
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mProgressBar.setVisibility(View.GONE);
+    }
+}
