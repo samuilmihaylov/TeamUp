@@ -1,6 +1,5 @@
 package com.teamup.mihaylov.teamup;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -32,13 +31,10 @@ public class SignupFragment extends Fragment {
         @Override
         public void onClick(View view) {
             Fragment signinFragment = new SigninFragment();
-
-            getActivity().setTitle("Sign in");
-
-            getActivity().getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.content_frame, signinFragment)
-                .commit();
+//            getActivity().getSupportFragmentManager()
+//                .beginTransaction()
+//                .replace(R.id.content_container, signinFragment)
+//                .commit();
         }
     };
 
@@ -78,9 +74,16 @@ public class SignupFragment extends Fragment {
                             if (!task.isSuccessful()) {
                                 Toast.makeText(getActivity().getApplicationContext(), "Authentication failed." + task.getException(),
                                         Toast.LENGTH_SHORT).show();
-                            } else {
-                                startActivity(new Intent(getActivity().getApplicationContext(), MainActivity.class));
                                 getActivity().finish();
+                            } else {
+//                                ((MainActivity)getActivity()).updateUI();
+
+                                Fragment homeFragment = new HomeFragment();
+
+//                                getActivity().getSupportFragmentManager()
+//                                        .beginTransaction()
+//                                        .replace(R.id.content_container, homeFragment)
+//                                        .commit();
                             }
                         }
                     });
@@ -106,12 +109,10 @@ public class SignupFragment extends Fragment {
         if (mAuth.getCurrentUser() != null) {
             Fragment homeFragment = new HomeFragment();
 
-            getActivity().setTitle(mAuth.getCurrentUser().getEmail());
-
-            getActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.content_frame, homeFragment)
-                    .commit();
+//            getActivity().getSupportFragmentManager()
+//                    .beginTransaction()
+//                    .replace(R.id.content_container, homeFragment)
+//                    .commit();
         }
 
         mInputEmail = (EditText) view.findViewById(R.id.input_email);

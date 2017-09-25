@@ -1,24 +1,21 @@
 package com.teamup.mihaylov.teamup;
 
-
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,7 +33,34 @@ public class SigninFragment extends Fragment {
     private Button.OnClickListener mBtnSignInListener = new Button.OnClickListener() {
         @Override
         public void onClick(View view) {
+            String email = mInputEmail.getText().toString().trim();
+            String password = mInputPassword.getText().toString().trim();
 
+            mProgressBar.setVisibility(View.VISIBLE);
+
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            mProgressBar.setVisibility(View.GONE);
+                            if (task.isSuccessful()) {
+                                Toast.makeText(getActivity().getApplicationContext(), "signInWithEmail:success", Toast.LENGTH_SHORT).show();
+
+                                ((MainActivity)getActivity()).updateDrawer();
+
+                                Fragment homeFragment = new HomeFragment();
+
+                                getActivity().getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .replace(R.id.content_container, homeFragment)
+                                        .commit();
+
+                            } else {
+                                Toast.makeText(getActivity().getApplicationContext(), "signInWithEmail:failure", Toast.LENGTH_SHORT).show();
+                                getActivity().finish();
+                            }
+                        }
+                    });
         }
     };
 
@@ -44,12 +68,9 @@ public class SigninFragment extends Fragment {
         @Override
         public void onClick(View view) {
             Fragment signupFragment = new SignupFragment();
-
-            getActivity().setTitle("Sign un");
-
             getActivity().getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.content_frame, signupFragment)
+                    .replace(R.id.content_container, signupFragment)
                     .commit();
         }
     };
@@ -61,11 +82,9 @@ public class SigninFragment extends Fragment {
         }
     };
 
-
     public SigninFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -75,12 +94,9 @@ public class SigninFragment extends Fragment {
 
         if (mAuth.getCurrentUser() != null) {
             Fragment homeFragment = new HomeFragment();
-
-            getActivity().setTitle(mAuth.getCurrentUser().getEmail());
-
             getActivity().getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.content_frame, homeFragment)
+                    .replace(R.id.content_container, homeFragment)
                     .commit();
         }
 
@@ -95,7 +111,6 @@ public class SigninFragment extends Fragment {
         mBtnSignIn.setOnClickListener(mBtnSignInListener);
         mBtnSignUp.setOnClickListener(mBtnSignUpListener);
         mBtnResetPassword.setOnClickListener(mBtnResetPasswordListener);
-
 
         return view;
     }

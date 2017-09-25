@@ -9,6 +9,7 @@
         android:layout_height="fill_parent"
         android:gravity="center"
         android:orientation="vertical"
+        android:background="@color/colorBackground"
         android:padding="16dip">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -59,7 +60,8 @@
             android:layout_height="wrap_content"
             android:text="@string/btn_sign_up"
             android:layout_marginTop="15dip"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary"
             android:textStyle="bold"/>
 
         <Button
