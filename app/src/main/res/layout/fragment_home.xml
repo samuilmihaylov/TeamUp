@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    tools:context="com.teamup.mihaylov.teamup.HomeFragment">
+    tools:context="com.teamup.mihaylov.teamup.Home.HomeFragment">
 
     <RelativeLayout
         android:layout_width="fill_parent"

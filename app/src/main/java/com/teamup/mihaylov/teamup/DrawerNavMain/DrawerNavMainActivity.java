@@ -1,20 +1,25 @@
-package com.teamup.mihaylov.teamup;
+package com.teamup.mihaylov.teamup.DrawerNavMain;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -23,10 +28,17 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
+import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
+import com.mikepenz.materialdrawer.util.DrawerImageLoader;
+import com.mikepenz.materialdrawer.util.DrawerUIUtils;
+import com.teamup.mihaylov.teamup.Home.HomeFragment;
+import com.teamup.mihaylov.teamup.SignUp.SignUpActivity;
+import com.teamup.mihaylov.teamup.UserProfile.UserProfileActivity;
+import com.teamup.mihaylov.teamup.R;
+import com.teamup.mihaylov.teamup.SignIn.SignInActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class DrawerNavMainActivity extends AppCompatActivity {
 
-    private ActionBarDrawerToggle mDrawerToggle;
     private Drawer mDrawer;
     private Toolbar mToolbar;
     private FirebaseAuth mAuth;
@@ -38,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private PrimaryDrawerItem mSignInDrawerItem;
     private PrimaryDrawerItem mSignUpDrawerItem;
     private PrimaryDrawerItem mSignOutDrawerItem;
+    private PrimaryDrawerItem mProfileDrawerItem;
     private AccountHeader mHeaderResult;
 
     @Override
@@ -51,23 +64,39 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 mUser = firebaseAuth.getCurrentUser();
-                if (mUser!=null){
+                if (mUser != null){
+                    updateDrawer();
                     Toast.makeText(getApplicationContext(), "User logged in", Toast.LENGTH_SHORT).show();
                 }
                 else{
+                    updateDrawer();
                     Toast.makeText(getApplicationContext(), "User not logged in", Toast.LENGTH_SHORT).show();
                 }
             }
         };
 
-        setupDrawerHeader();
-        setupDrawerItems();
-        setupDrawer();
-    }
+        DrawerImageLoader.init(new AbstractDrawerImageLoader() {
+            @Override
+            public void set(ImageView imageView, Uri uri, Drawable placeholder, String tag) {
+                Glide.with(imageView.getContext()).load(uri).placeholder(placeholder).into(imageView);
+            }
 
-    public void onStart(){
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
+            @Override
+            public void cancel(ImageView imageView) {
+                Glide.clear(imageView);
+            }
+
+            @Override
+            public Drawable placeholder(Context ctx, String tag) {
+                if (DrawerImageLoader.Tags.PROFILE.name().equals(tag)) {
+                    return DrawerUIUtils.getPlaceHolder(ctx);
+                } else if (DrawerImageLoader.Tags.ACCOUNT_HEADER.name().equals(tag)) {
+                    return new IconicsDrawable(ctx).iconText(" ").backgroundColorRes(com.mikepenz.materialdrawer.R.color.primary).sizeDp(56);
+                }
+
+                return super.placeholder(ctx, tag);
+            }
+        });
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -75,34 +104,55 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-    public void onStop(){
+    protected void onStart(){
+        mAuth.addAuthStateListener(mAuthListener);
+        mUser = mAuth.getCurrentUser();
+
+        setupDrawer();
+
+        super.onStart();
+    }
+
+    protected void onStop(){
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
+
         super.onStop();
     }
 
-    public void setupDrawerHeader(){
-        String userEmail;
-        String userName;
+    @Override
+    protected void onResume() {
+        updateDrawer();
 
-        if(mAuth.getCurrentUser() != null){
-            userEmail = mAuth.getCurrentUser().getEmail();
-            userName = mAuth.getCurrentUser().getDisplayName();
-        }else {
-            userEmail = "Not signed in";
-            userName = "Anonymous";
+        super.onResume();
+    }
+
+    public void setupDrawerHeader(){
+        ProfileDrawerItem userProfile =  new ProfileDrawerItem();
+
+        if(mUser != null){
+            String userEmail = mUser.getEmail();
+            String userName = mUser.getDisplayName();
+            if(mUser.getPhotoUrl() != null) {
+                userProfile.withName(userEmail).withTextColor(Color.BLACK)
+                        .withEmail(userName).withTextColor(Color.BLACK)
+                        .withIcon(mUser.getPhotoUrl().toString());
+            }
+
+            userProfile.withName(userEmail).withTextColor(Color.BLACK)
+                    .withEmail(userName).withTextColor(Color.BLACK);
+
+        } else {
+            userProfile
+                    .withName("Not signed in").withTextColor(Color.BLACK)
+                    .withEmail("Anonymous").withTextColor(Color.BLACK);
         }
 
         mHeaderResult = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.drawer_profile_background)
-                .addProfiles(
-                        new ProfileDrawerItem()
-                                .withName(userEmail).withTextColor(Color.BLACK)
-                                .withEmail(userName).withTextColor(Color.BLACK)
-                                .withIcon(FontAwesome.Icon.faw_user_circle)
-                )
+                .addProfiles(userProfile)
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
                     public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
@@ -113,24 +163,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setupDrawerItems(){
+
         mHomeDrawerItem =
                 new PrimaryDrawerItem().withName(R.string.drawer_home).withIdentifier(1)
                         .withIcon(GoogleMaterial.Icon.gmd_home);
 
+        mProfileDrawerItem =
+                new PrimaryDrawerItem().withName(R.string.drawer_profile).withIdentifier(2)
+                        .withIcon(GoogleMaterial.Icon.gmd_person);
+
         mSignInDrawerItem =
-                new PrimaryDrawerItem().withName(R.string.drawer_sign_in).withIdentifier(2)
+                new PrimaryDrawerItem().withName(R.string.drawer_sign_in).withIdentifier(3)
                         .withIcon(FontAwesome.Icon.faw_sign_in);
 
         mSignUpDrawerItem =
-                new PrimaryDrawerItem().withName(R.string.drawer_sign_up).withIdentifier(3)
+                new PrimaryDrawerItem().withName(R.string.drawer_sign_up).withIdentifier(4)
                         .withIcon(FontAwesome.Icon.faw_user_plus);
 
         mSignOutDrawerItem =
-                new PrimaryDrawerItem().withName(R.string.drawer_sign_out).withIdentifier(4)
+                new PrimaryDrawerItem().withName(R.string.drawer_sign_out).withIdentifier(5)
                         .withIcon(FontAwesome.Icon.faw_sign_out);
     }
 
     public void setupDrawer(){
+
+        setupDrawerHeader();
+        setupDrawerItems();
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
         mDrawerBuilder = new DrawerBuilder()
@@ -150,22 +209,28 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
 
+                            Intent intent;
+
                             switch (position){
                                 case 1:
                                     mFragment = new HomeFragment();
                                     break;
                                 case 2:
-                                    mFragment = new SigninFragment();
+                                    intent = new Intent(getApplicationContext(), SignInActivity.class);
+                                    startActivity(intent);
                                     break;
                                 case 3:
-                                    mFragment = new SignupFragment();
+                                    intent = new Intent(getApplicationContext(), SignUpActivity.class);
+                                    startActivity(intent);
                                     break;
                             }
 
-                            getSupportFragmentManager()
-                                    .beginTransaction()
-                                    .replace(R.id.content_container, mFragment)
-                                    .commit();
+                            if(mFragment != null){
+                                getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .replace(R.id.content_container, mFragment)
+                                        .commit();
+                            }
 
                             return false;
                         }
@@ -175,6 +240,7 @@ public class MainActivity extends AppCompatActivity {
         else {
             mDrawer = mDrawerBuilder.addDrawerItems(
                     mHomeDrawerItem,
+                    mProfileDrawerItem,
                     mSignOutDrawerItem)
                     .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                         @Override
@@ -185,6 +251,10 @@ public class MainActivity extends AppCompatActivity {
                                     mFragment = new HomeFragment();
                                     break;
                                 case 2:
+                                    Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
+                                    startActivity(intent);
+                                    break;
+                                case 3:
                                     mAuth.signOut();
                                     updateDrawer();
                                     break;

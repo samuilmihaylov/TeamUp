@@ -1,10 +1,12 @@
-package com.teamup.mihaylov.teamup;
+package com.teamup.mihaylov.teamup.Home;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.teamup.mihaylov.teamup.R;
 
 /**
  * A simple {@link Fragment} subclass.

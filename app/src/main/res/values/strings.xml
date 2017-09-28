@@ -5,21 +5,33 @@
     <string name="btn_sign_in">Sign in</string>
     <string name="btn_sign_up">Sign up</string>
     <string name="btn_sign_out">Sign Out</string>
-
-    <!-- Hints -->
-    <string name="hint_email">Email</string>
-    <string name="hint_password">Password</string>
-
     <string name="btn_link_to_login">Already signed up? Sign in</string>
     <string name="btn_link_to_register">Not signed up? Sign up now</string>
     <string name="btn_forgot_password">Forgot your password?</string>
 
-    <string name="drawer_open">Open navigation drawer</string>
-    <string name="drawer_close">Close navigation drawer</string>
+    <string name="btn_change">Change</string>
+    <string name="btn_send">Send</string>
+    <string name="btn_change_email">Change Email</string>
+    <string name="btn_change_password">Change Password</string>
+    <string name="hint_old_password">Old password</string>
+    <string name="btn_send_password_reset_email">Send Password reset email</string>
+
+    <!-- Hints -->
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_new_email">New Email</string>
+    <string name="hint_new_pass">New Password</string>
+
+    <!-- Drawer -->
 
     <!-- Navigation Drawer items -->
     <string name="drawer_home">Home</string>
+    <string name="drawer_profile">Profile</string>
     <string name="drawer_sign_in">Sign in</string>
     <string name="drawer_sign_up">Sign up</string>
     <string name="drawer_sign_out">Sign Out</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+
+    <!-- TODO: Remove or change this placeholder text -->
 </resources>

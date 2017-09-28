@@ -9,14 +9,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".MainActivity">
+        <activity android:name=".DrawerNavMain.DrawerNavMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <uses-permission android:name="android.permission.INTERNET" />
+
+        <activity android:name=".UserProfile.UserProfileActivity" />
+        <activity android:name=".SignIn.SignInActivity" />
+        <activity android:name=".SignUp.SignUpActivity"></activity>
     </application>
 
 </manifest>
