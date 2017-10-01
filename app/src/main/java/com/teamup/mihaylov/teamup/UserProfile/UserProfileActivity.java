@@ -53,8 +53,6 @@ public class UserProfileActivity extends DrawerNavMainActivity {
                 .beginTransaction()
                 .replace(R.id.content_container, mFragment)
                 .commit();
-
-        setupDrawer();
     }
 
     public void changeEmail(String newEmail) {
@@ -116,12 +114,12 @@ public class UserProfileActivity extends DrawerNavMainActivity {
 //                    }
 //                });
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
-    }
+//
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        mAuth.addAuthStateListener(mAuthListener);
+//    }
 
     @Override
     public void onStop() {

@@ -59,8 +59,6 @@ public class SignInActivity extends DrawerNavMainActivity implements GoogleApiCl
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
-
-        setupDrawer();
     }
 
     public void emailSingIn(String email, String password) {

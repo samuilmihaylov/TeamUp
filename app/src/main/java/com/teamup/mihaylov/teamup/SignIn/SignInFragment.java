@@ -1,5 +1,6 @@
 package com.teamup.mihaylov.teamup.SignIn;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import com.teamup.mihaylov.teamup.R;
+import com.teamup.mihaylov.teamup.SignUp.SignUpActivity;
 import com.teamup.mihaylov.teamup.SignUp.SignUpFragment;
 
 /**
@@ -40,11 +42,8 @@ public class SignInFragment extends Fragment {
     private Button.OnClickListener mBtnSignUpListener = new Button.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Fragment signupFragment = new SignUpFragment();
-            getActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.content_container, signupFragment)
-                    .commit();
+            Intent intent = new Intent(getActivity(), SignUpActivity.class);
+            startActivity(intent);
         }
     };
 

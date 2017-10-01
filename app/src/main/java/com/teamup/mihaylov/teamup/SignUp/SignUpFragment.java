@@ -21,6 +21,8 @@ public class SignUpFragment extends Fragment {
     private Button mBtnResetPassword;
     private EditText mInputEmail;
     private EditText mInputPassword;
+    private EditText mInputFirstName;
+    private EditText mInputLastName;
     private ProgressBar mProgressBar;
 
     private Button.OnClickListener mBtnSignInListener = new Button.OnClickListener() {
@@ -36,6 +38,10 @@ public class SignUpFragment extends Fragment {
         public void onClick(View view) {
             String email = mInputEmail.getText().toString().trim();
             String password = mInputPassword.getText().toString().trim();
+            String firstName = mInputFirstName.getText().toString().trim();
+            String lastName = mInputLastName.getText().toString().trim();
+
+            String displayName = firstName + " " + lastName;
 
             if (TextUtils.isEmpty(email)) {
                 mInputEmail.setError("Enter email address!");
@@ -48,7 +54,7 @@ public class SignUpFragment extends Fragment {
             }
             else {
                 mProgressBar.setVisibility(View.VISIBLE);
-                ((SignUpActivity)getActivity()).emailSignUp(email, password);
+                ((SignUpActivity)getActivity()).emailSignUp(email, password, displayName);
             }
         }
     };
@@ -70,6 +76,8 @@ public class SignUpFragment extends Fragment {
 
         mInputEmail = (EditText) view.findViewById(R.id.input_email);
         mInputPassword = (EditText) view.findViewById(R.id.input_password);
+        mInputFirstName = (EditText) view.findViewById(R.id.input_firstname);
+        mInputLastName = (EditText) view.findViewById(R.id.input_lastname);
 
         mBtnSignIn = (Button) view.findViewById(R.id.btn_sign_in);
         mBtnSignUp = (Button) view.findViewById(R.id.btn_sign_up);

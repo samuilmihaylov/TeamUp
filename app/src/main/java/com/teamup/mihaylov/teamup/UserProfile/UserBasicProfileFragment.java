@@ -136,7 +136,7 @@ public class UserBasicProfileFragment extends Fragment {
         changeEmailBtnTrigger.setOnClickListener(changeEmailBtnTriggerListener);
 
         changePasswordBtnTrigger = (Button) view.findViewById(R.id.change_password_button);
-        changePasswordBtnTrigger.setOnClickListener(changeEmailBtnTriggerListener);
+        changePasswordBtnTrigger.setOnClickListener(changePasswordBtnTriggerListener);
 
         sendResetEmailBtnTrigger = (Button) view.findViewById(R.id.sending_pass_reset_button);
         sendResetEmailBtnTrigger.setOnClickListener(sendResetEmailBtnTriggerListener);
