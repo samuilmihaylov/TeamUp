@@ -45,4 +45,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="drawer_events_section">Events</string>
+    <string name="btn_join_event">Join</string>
+    <string name="btn_edit_event">Edit</string>
+    <string name="btn_leave_event">Leave</string>
 </resources>
