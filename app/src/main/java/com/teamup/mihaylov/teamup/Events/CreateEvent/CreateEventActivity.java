@@ -9,7 +9,7 @@ import com.teamup.mihaylov.teamup.DrawerNavMain.DrawerNavMainActivity;
 import com.teamup.mihaylov.teamup.R;
 import com.teamup.mihaylov.teamup.base.models.Event;
 
-import java.util.Date;
+import java.util.ArrayList;
 
 public class CreateEventActivity extends DrawerNavMainActivity {
 
@@ -42,8 +42,13 @@ public class CreateEventActivity extends DrawerNavMainActivity {
     }
 
     public void add(String eventName, String eventDescription){
-        Event event = new Event(eventName, eventDescription, mTime, mDate, mCurrentUserName, mCurrentUserId);
-        mDatabase.push().setValue(event);
+        String eventId = mDatabase.push().getKey();
+
+        ArrayList<String> participants = new ArrayList<String>();
+        participants.add(mCurrentUserId);
+
+        Event event = new Event(eventId, eventName, eventDescription, mTime, mDate, mCurrentUserName, mCurrentUserId, participants);
+        mDatabase.child(eventId).setValue(event);
     }
 
     public void setTime(String time) {
