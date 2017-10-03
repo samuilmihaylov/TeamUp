@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -162,30 +163,36 @@ public class DrawerNavMainActivity extends AppCompatActivity {
 
         mHomeDrawerItem =
                 new PrimaryDrawerItem().withName(R.string.drawer_home).withIdentifier(1)
-                        .withIcon(GoogleMaterial.Icon.gmd_home);
+                        .withIcon(GoogleMaterial.Icon.gmd_home)
+                        .withIconColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
 
         mProfileDrawerItem =
                 new PrimaryDrawerItem().withName(R.string.drawer_profile).withIdentifier(2)
-                        .withIcon(GoogleMaterial.Icon.gmd_person);
+                        .withIcon(GoogleMaterial.Icon.gmd_person)
+                        .withIconColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
 
         mSignInDrawerItem =
                 new PrimaryDrawerItem().withName(R.string.drawer_sign_in).withIdentifier(3)
-                        .withIcon(FontAwesome.Icon.faw_sign_in);
+                        .withIcon(FontAwesome.Icon.faw_sign_in)
+                        .withIconColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
 
         mSignUpDrawerItem =
                 new PrimaryDrawerItem().withName(R.string.drawer_sign_up).withIdentifier(4)
-                        .withIcon(FontAwesome.Icon.faw_user_plus);
+                        .withIcon(FontAwesome.Icon.faw_user_plus)
+                        .withIconColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
 
         mSignOutDrawerItem =
                 new PrimaryDrawerItem().withName(R.string.drawer_sign_out).withIdentifier(5)
-                        .withIcon(FontAwesome.Icon.faw_sign_out);
+                        .withIcon(FontAwesome.Icon.faw_sign_out)
+                        .withIconColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
 
         mListEventsDrawerItem = new PrimaryDrawerItem().withName(R.string.drawer_list_events).withIdentifier(6)
-                .withIcon(FontAwesome.Icon.faw_list);
+                .withIcon(FontAwesome.Icon.faw_list)
+                .withIconColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
 
         mCreateEventDrawerItem = new PrimaryDrawerItem().withName(R.string.drawer_create_event).withIdentifier(7)
-                .withIcon(GoogleMaterial.Icon.gmd_create);
-
+                .withIcon(GoogleMaterial.Icon.gmd_create)
+                .withIconColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
 
         mEventsSectionDrawerItem = new SectionDrawerItem().withName(R.string.drawer_events_section);
     }
@@ -247,8 +254,8 @@ public class DrawerNavMainActivity extends AppCompatActivity {
                     mProfileDrawerItem,
                     mSignOutDrawerItem,
                     mEventsSectionDrawerItem,
-                    mCreateEventDrawerItem,
-                    mListEventsDrawerItem)
+                    mListEventsDrawerItem,
+                    mCreateEventDrawerItem)
                     .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
 
                         private Intent intent;
