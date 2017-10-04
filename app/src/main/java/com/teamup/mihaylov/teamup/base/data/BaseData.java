@@ -7,8 +7,12 @@ import io.reactivex.Observable;
  */
 
 public abstract class BaseData<T> {
+
     public abstract Observable<T[]> getAll();
+
     public abstract Observable<T> getById(String id);
-    public abstract Observable<T> add(T item);
+
+    public abstract void add(T item);
+
     public abstract Observable<T> remove(T item);
 }

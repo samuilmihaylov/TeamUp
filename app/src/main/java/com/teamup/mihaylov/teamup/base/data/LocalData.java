@@ -27,9 +27,8 @@ public class LocalData<T> extends BaseData<T> {
     }
 
     @Override
-    public Observable add(T item) {
+    public void add(T item) {
         this.items.add(item);
-        return Observable.just(item);
     }
 
     @Override
