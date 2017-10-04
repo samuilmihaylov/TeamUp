@@ -1,9 +1,8 @@
 package com.teamup.mihaylov.teamup.SignIn;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -18,42 +17,47 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserInfo;
 import com.teamup.mihaylov.teamup.DrawerNavMain.DrawerNavMainActivity;
-import com.teamup.mihaylov.teamup.Home.HomeFragment;
 import com.teamup.mihaylov.teamup.R;
+import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
 
-public class SignInActivity extends DrawerNavMainActivity implements GoogleApiClient.OnConnectionFailedListener {
-    private SignInFragment mSignInFragment;
-    private static final int RC_SIGN_IN = 9001;
-    private FirebaseAuth mAuth;
+import javax.inject.Inject;
+
+public class SignInActivity extends DrawerNavMainActivity
+        implements GoogleApiClient.OnConnectionFailedListener {
+
+    @Inject
+    public SignInContracts.Presenter mPresenter;
+
+    @Inject
+    AuthenticationProvider mAuthProvider;
+
+    private SignInFragment mView;
     private GoogleApiClient mGoogleApiClient;
+    private static final int RC_SIGN_IN = 9001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mSignInFragment = new SignInFragment();
+        mView = SignInFragment.newInstance();
+        mView.setPresenter(mPresenter);
+
+        mAuthProvider.setActivity(this);
+        mPresenter.setAuth(mAuthProvider);
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.content_container, mSignInFragment)
+                .replace(R.id.content_container, mView)
                 .commit();
-
-        mAuth = FirebaseAuth.getInstance();
-
-        if (mAuth.getCurrentUser() != null) {
-            Fragment homeFragment = new HomeFragment();
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.content_container, homeFragment)
-                    .commit();
-        }
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken("695242278170-tn551iph1cuf7jpvbpl2tl4c51b1ufaq.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
+
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
@@ -61,28 +65,34 @@ public class SignInActivity extends DrawerNavMainActivity implements GoogleApiCl
                 .build();
     }
 
-    public void emailSingIn(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email, password)
+    public void signInWithGoogle() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuthProvider.getFirebaseInstance().signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-
                         if (task.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), "signInWithEmail:success", Toast.LENGTH_SHORT).show();
-
                             Intent intent = new Intent(getApplicationContext(), DrawerNavMainActivity.class);
                             startActivity(intent);
                         } else {
-                            Toast.makeText(getApplicationContext(), "signInWithEmail:failure", Toast.LENGTH_SHORT).show();
-                            finish();
+                            Intent intent = new Intent(getApplicationContext(), DrawerNavMainActivity.class);
+                            startActivity(intent);
                         }
                     }
                 });
     }
 
-    public void googleSignIn(){
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+    public void signOutWithGoogle() {
+        for (UserInfo user : FirebaseAuth.getInstance().getCurrentUser().getProviderData()) {
+            if (mAuthProvider.getUser().getProviderId().equals("google.com")) {
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+            }
+        }
     }
 
     @Override
@@ -95,23 +105,6 @@ public class SignInActivity extends DrawerNavMainActivity implements GoogleApiCl
                 firebaseAuthWithGoogle(account);
             }
         }
-    }
-
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Intent intent = new Intent(getApplicationContext(), DrawerNavMainActivity.class);
-                            startActivity(intent);
-                        } else {
-                            Intent intent = new Intent(getApplicationContext(), DrawerNavMainActivity.class);
-                            startActivity(intent);
-                        }
-                    }
-                });
     }
 
     @Override

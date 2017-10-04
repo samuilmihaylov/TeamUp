@@ -10,20 +10,24 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
+import com.teamup.mihaylov.teamup.DrawerNavMain.DrawerNavMainActivity;
 import com.teamup.mihaylov.teamup.R;
 import com.teamup.mihaylov.teamup.SignUp.SignUpActivity;
-import com.teamup.mihaylov.teamup.SignUp.SignUpFragment;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SignInFragment extends Fragment {
+public class SignInFragment extends Fragment implements SignInContracts.View {
+
+    private SignInContracts.Presenter mPresenter;
 
     private Button mBtnSignIn;
     private Button mBtnSignUp;
     private Button mBtnResetPassword;
+
     private EditText mInputEmail;
     private EditText mInputPassword;
+
     private ProgressBar mProgressBar;
     private View mBtnSignInGoogle;
 
@@ -35,7 +39,10 @@ public class SignInFragment extends Fragment {
 
             mProgressBar.setVisibility(View.VISIBLE);
 
-            ((SignInActivity)getActivity()).emailSingIn(email, password);
+            mPresenter.signInWithEmail(email, password);
+
+            Intent intent = new Intent(getActivity(), DrawerNavMainActivity.class);
+            startActivity(intent);
         }
     };
 
@@ -58,7 +65,7 @@ public class SignInFragment extends Fragment {
         @Override
         public void onClick(View view) {
             mProgressBar.setVisibility(View.VISIBLE);
-            ((SignInActivity)getActivity()).googleSignIn();
+            ((SignInActivity)getActivity()).signInWithGoogle();
         }
     };
 
@@ -74,12 +81,14 @@ public class SignInFragment extends Fragment {
         mInputPassword = (EditText) view.findViewById(R.id.input_password);
 
         mBtnSignIn = (Button) view.findViewById(R.id.btn_sign_in);
+        mBtnSignIn.setOnClickListener(mBtnSignInListener);
+
         mBtnSignInGoogle = view.findViewById(R.id.sign_in_button);
         mBtnSignUp = (Button) view.findViewById(R.id.btn_sign_up);
+
         mBtnResetPassword = (Button) view.findViewById(R.id.btn_reset_password);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);
 
-        mBtnSignIn.setOnClickListener(mBtnSignInListener);
         mBtnSignInGoogle.setOnClickListener(mBtnSignInGoogleListener);
         mBtnSignUp.setOnClickListener(mBtnSignUpListener);
         mBtnResetPassword.setOnClickListener(mBtnResetPasswordListener);
@@ -87,9 +96,31 @@ public class SignInFragment extends Fragment {
         return view;
     }
 
+    public static SignInFragment newInstance() {
+        return new SignInFragment();
+    }
+
+    @Override
+    public void setPresenter(SignInContracts.Presenter presenter) {
+        mPresenter = presenter;
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        mProgressBar.setVisibility(View.GONE);
+        mPresenter.subscribe(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPresenter.unsubscribe();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.unsubscribe();
+        mPresenter = null;
     }
 }
