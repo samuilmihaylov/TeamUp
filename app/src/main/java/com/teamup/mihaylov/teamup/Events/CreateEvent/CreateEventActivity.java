@@ -2,24 +2,19 @@ package com.teamup.mihaylov.teamup.Events.CreateEvent;
 
 import android.os.Bundle;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.teamup.mihaylov.teamup.DrawerNavMain.DrawerNavMainActivity;
 import com.teamup.mihaylov.teamup.R;
-import com.teamup.mihaylov.teamup.base.models.Event;
 
-import java.util.ArrayList;
+import javax.inject.Inject;
 
 public class CreateEventActivity extends DrawerNavMainActivity {
 
-    private CreateEventFragment mCreateEventFragment;
-    private DatabaseReference mDatabase;
-    private FirebaseAuth mAuth;
-    private String mCurrentUserName;
-    private String mCurrentUserId;
+    private CreateEventFragment mCreateEventView;
     private String mTime;
     private String mDate;
+
+    @Inject
+    CreateEventContracts.Presenter mCreateEventPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,43 +22,19 @@ public class CreateEventActivity extends DrawerNavMainActivity {
 
         setContentView(R.layout.activity_main);
 
-        mCreateEventFragment = new CreateEventFragment();
+        mCreateEventView = CreateEventFragment.newInstance();
+
+        mCreateEventView.setPresenter(mCreateEventPresenter);
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.content_container, mCreateEventFragment)
+                .replace(R.id.content_container, mCreateEventView)
                 .commit();
-
-        mDatabase = FirebaseDatabase.getInstance().getReference("events");
-
-        mAuth = FirebaseAuth.getInstance();
-        mCurrentUserName = mAuth.getCurrentUser().getDisplayName();
-        mCurrentUserId = mAuth.getCurrentUser().getUid();
     }
 
-    public void add(String eventName, String eventDescription){
-        String eventId = mDatabase.push().getKey();
-
-        ArrayList<String> participants = new ArrayList<String>();
-        participants.add(mCurrentUserId);
-
-        Event event = new Event(eventId, eventName, eventDescription, mTime, mDate, mCurrentUserName, mCurrentUserId, participants);
-        mDatabase.child(eventId).setValue(event);
-    }
-
-    public void setTime(String time) {
-        mTime = time;
-    }
-
-    public void setDate(String date) {
-        mDate = date;
-    }
-
-    public String getTime(){
-        return this.mTime;
-    }
-
-    public String getDate() {
-        return this.mDate;
+    @Override
+    protected void onResume() {
+        mCreateEventView.setPresenter(mCreateEventPresenter);
+        super.onResume();
     }
 }

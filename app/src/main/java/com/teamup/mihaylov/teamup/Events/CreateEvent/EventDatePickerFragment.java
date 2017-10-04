@@ -41,8 +41,6 @@ public class EventDatePickerFragment extends DialogFragment implements DatePicke
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         String formattedDate = dateFormat.format(c.getTime());
 
-        ((CreateEventActivity)getActivity()).setDate(formattedDate);
-
         Intent intent = new Intent();
         intent.putExtra("selected_date", formattedDate);
         getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);

@@ -44,8 +44,6 @@ public class EventTimePickerFragment extends DialogFragment
         SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a");
         String formattedTime = dateFormat.format(c.getTime());
 
-        ((CreateEventActivity)getActivity()).setTime(formattedTime);
-
         Intent intent = new Intent();
         intent.putExtra("selected_time", formattedTime);
         getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);

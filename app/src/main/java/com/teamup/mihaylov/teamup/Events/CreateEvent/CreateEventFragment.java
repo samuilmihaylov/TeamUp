@@ -15,14 +15,29 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.teamup.mihaylov.teamup.DrawerNavMain.DrawerNavMainActivity;
+import com.teamup.mihaylov.teamup.Events.ListEvents.ListEventsActivity;
 import com.teamup.mihaylov.teamup.R;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CreateEventFragment extends Fragment {
-    public static final int DATEPICKER_FRAGMENT = 1;
-    public static final int TIMEPICKER_FRAGMENT = 2;
+public class CreateEventFragment extends Fragment implements CreateEventContracts.View {
+    private final int DATEPICKER_FRAGMENT = 1;
+    private final int TIMEPICKER_FRAGMENT = 2;
+
+    private EditText mInputEventName;
+    private EditText mInputEventDescription;
+    private ProgressBar mProgressBar;
+
+    private Button mBtnPickDate;
+    private Button mBtnPickTime;
+    private Button mBtnCreateEvent;
+
+    private TextView mShowDateTextView;
+    private TextView mShowTimeTextView;
+
+    private String mDate;
+    private String mTime;
 
     private Button.OnClickListener mCreateEventBtnListener = new Button.OnClickListener() {
         @Override
@@ -32,8 +47,11 @@ public class CreateEventFragment extends Fragment {
 
             mProgressBar.setVisibility(View.VISIBLE);
 
-            ((CreateEventActivity)getActivity()).add(eventName, eventDescription);
-            Intent intent = new Intent(getActivity(), DrawerNavMainActivity.class);
+//            ((CreateEventActivity)getActivity()).add(eventName, eventDescription);
+
+            mPresenter.addEvent(eventName, eventDescription, mDate, mTime);
+
+            Intent intent = new Intent(getActivity(), ListEventsActivity.class);
             startActivity(intent);
         }
     };
@@ -46,6 +64,7 @@ public class CreateEventFragment extends Fragment {
             newFragment.show(getActivity().getSupportFragmentManager().beginTransaction(), "date_picker");
         }
     };
+
     private Button.OnClickListener mPickTimeBtnListener = new Button.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -55,20 +74,14 @@ public class CreateEventFragment extends Fragment {
         }
     };
 
-
-    private Button mBtnCreateEvent;
-    private EditText mInputEventName;
-    private EditText mInputEventDescription;
-    private ProgressBar mProgressBar;
-    private Button mBtnPickDate;
-    private Button mBtnPickTime;
-    private TextView mShowDateTextView;
-    private TextView mShowTimeTextView;
-    private String mDate;
-    private String mTime;
+    private CreateEventContracts.Presenter mPresenter;
 
     public CreateEventFragment() {
         // Required empty public constructor
+    }
+
+    public static CreateEventFragment newInstance() {
+        return new CreateEventFragment();
     }
 
     @Override
@@ -117,7 +130,25 @@ public class CreateEventFragment extends Fragment {
 
     @Override
     public void onResume() {
-        mProgressBar.setVisibility(View.GONE);
+        mPresenter.subscribe(this);
         super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        mPresenter.unsubscribe();
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.unsubscribe();
+        mPresenter = null;
+    }
+
+    @Override
+    public void setPresenter(CreateEventContracts.Presenter presenter) {
+        mPresenter = presenter;
     }
 }
