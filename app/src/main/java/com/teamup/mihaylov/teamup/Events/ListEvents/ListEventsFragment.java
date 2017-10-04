@@ -72,47 +72,6 @@ public class ListEventsFragment extends Fragment {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-
-//            @Override
-//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                mEventsList.clear();
-//
-//                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
-//                    Event event = postSnapshot.getValue(Event.class);
-//                    mEventsList.add(event);
-//                }
-//
-//                mAdapter.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//                mEventsList.clear();
-//
-//                Event event = dataSnapshot.getValue(Event.class);
-//                mEventsList.add(event);
-//
-//                mAdapter.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onChildRemoved(DataSnapshot dataSnapshot) {
-//                mEventsList.clear();
-//                Event event = dataSnapshot.getValue(Event.class);
-//                mEventsList.add(event);
-//
-//                mAdapter.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//                mEventsList.clear();
-//
-//                Event event = dataSnapshot.getValue(Event.class);
-//                mEventsList.add(event);
-//
-//                mAdapter.notifyDataSetChanged();
-//            }
         });
 
         mAdapter = new EventsAdapter(mEventsList);

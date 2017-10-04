@@ -13,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,41 +39,56 @@ import com.teamup.mihaylov.teamup.SignUp.SignUpActivity;
 import com.teamup.mihaylov.teamup.UserProfile.UserProfileActivity;
 import com.teamup.mihaylov.teamup.R;
 import com.teamup.mihaylov.teamup.SignIn.SignInActivity;
+import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
 
-public class DrawerNavMainActivity extends AppCompatActivity {
+import javax.inject.Inject;
 
-    private Drawer mDrawer;
-    private Toolbar mToolbar;
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
+import dagger.android.support.DaggerAppCompatActivity;
+
+public class DrawerNavMainActivity extends DaggerAppCompatActivity {
+
     private Fragment mFragment;
-    private FirebaseUser mUser;
+
+    private Toolbar mToolbar;
+    private Drawer mDrawer;
     private DrawerBuilder mDrawerBuilder;
+    private AccountHeader mHeaderResult;
     private PrimaryDrawerItem mHomeDrawerItem;
     private PrimaryDrawerItem mSignInDrawerItem;
     private PrimaryDrawerItem mSignUpDrawerItem;
     private PrimaryDrawerItem mSignOutDrawerItem;
     private PrimaryDrawerItem mProfileDrawerItem;
-    private AccountHeader mHeaderResult;
     private PrimaryDrawerItem mCreateEventDrawerItem;
     private PrimaryDrawerItem mListEventsDrawerItem;
     private SectionDrawerItem mEventsSectionDrawerItem;
+
+    @Inject
+    AuthenticationProvider mAuthProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mAuth = FirebaseAuth.getInstance();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.content_container, new HomeFragment())
+                .commit();
+    }
 
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                mUser = firebaseAuth.getCurrentUser();
-                updateDrawer();
-            }
-        };
+    protected void onStart() {
+        setupDrawerHeaderProfileImage();
+        setupDrawerItems();
+        setupDrawer();
 
+        super.onStart();
+    }
+
+    protected void onStop() {
+        super.onStop();
+    }
+
+    public void setupDrawerHeaderProfileImage(){
         DrawerImageLoader.init(new AbstractDrawerImageLoader() {
             @Override
             public void set(ImageView imageView, Uri uri, Drawable placeholder, String tag) {
@@ -100,41 +114,18 @@ public class DrawerNavMainActivity extends AppCompatActivity {
                 return super.placeholder(ctx, tag);
             }
         });
-
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.content_container, new HomeFragment())
-                .commit();
     }
 
-    protected void onStart() {
-        mAuth.addAuthStateListener(mAuthListener);
-        mUser = mAuth.getCurrentUser();
-
-        setupDrawerItems();
-        setupDrawer();
-
-        super.onStart();
-    }
-
-    protected void onStop() {
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
-
-        super.onStop();
-    }
-
-    public void setupDrawerHeader() {
+    public void setupDrawerHeader(FirebaseUser user) {
         ProfileDrawerItem userProfile = new ProfileDrawerItem();
 
-        if (mUser != null) {
-            String userEmail = mUser.getEmail();
-            String userName = mUser.getDisplayName();
-            if (mUser.getPhotoUrl() != null) {
+        if (user != null) {
+            String userEmail = user.getEmail();
+            String userName = user.getDisplayName();
+            if (user.getPhotoUrl() != null) {
                 userProfile.withName(userEmail).withTextColor(Color.BLACK)
                         .withEmail(userName).withTextColor(Color.BLACK)
-                        .withIcon(mUser.getPhotoUrl().toString());
+                        .withIcon(user.getPhotoUrl().toString());
             }
 
             userProfile.withName(userEmail).withTextColor(Color.BLACK)
@@ -199,12 +190,17 @@ public class DrawerNavMainActivity extends AppCompatActivity {
 
     public void setupDrawer() {
 
-        setupDrawerHeader();
+        FirebaseUser user = mAuthProvider.getUser();
+
+        setupDrawerHeader(user);
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
+        long selectedDrawerItem = getIntent().getLongExtra("SELECTED_DRAWER_ITEM", 1);
+
         mDrawerBuilder = new DrawerBuilder()
-                .withSelectedItem(-1)
+                .withSelectedItem(selectedDrawerItem)
                 .withActivity(this)
                 .withToolbar(mToolbar)
                 .withActionBarDrawerToggle(true)
@@ -212,28 +208,25 @@ public class DrawerNavMainActivity extends AppCompatActivity {
                 .withAccountHeader(mHeaderResult)
                 .withRootView(R.id.drawer_layout);
 
-        if (mAuth.getCurrentUser() == null) {
+        if (user == null) {
             mDrawer = mDrawerBuilder.addDrawerItems(
                     mHomeDrawerItem,
                     mSignInDrawerItem,
                     mSignUpDrawerItem)
                     .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                        Intent intent;
+
                         @Override
                         public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-
-                            Intent intent;
-
-                            switch (position) {
+                            switch ((int) drawerItem.getIdentifier()) {
                                 case 1:
                                     mFragment = new HomeFragment();
                                     break;
-                                case 2:
-                                    intent = new Intent(getApplicationContext(), SignInActivity.class);
-                                    startActivity(intent);
-                                    break;
                                 case 3:
+                                    intent = new Intent(getApplicationContext(), SignInActivity.class);
+                                    break;
+                                case 4:
                                     intent = new Intent(getApplicationContext(), SignUpActivity.class);
-                                    startActivity(intent);
                                     break;
                             }
 
@@ -242,6 +235,11 @@ public class DrawerNavMainActivity extends AppCompatActivity {
                                         .beginTransaction()
                                         .replace(R.id.content_container, mFragment)
                                         .commit();
+                            }
+
+                            if(intent != null){
+                                intent.putExtra("SELECTED_DRAWER_ITEM", drawerItem.getIdentifier());
+                                startActivity(intent);
                             }
 
                             return false;
@@ -258,7 +256,7 @@ public class DrawerNavMainActivity extends AppCompatActivity {
                     mCreateEventDrawerItem)
                     .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
 
-                        private Intent intent;
+                        Intent intent;
 
                         @Override
                         public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
@@ -269,19 +267,16 @@ public class DrawerNavMainActivity extends AppCompatActivity {
                                     break;
                                 case 2:
                                     intent = new Intent(getApplicationContext(), UserProfileActivity.class);
-                                    startActivity(intent);
                                     break;
                                 case 5:
-                                    mAuth.signOut();
+                                    mAuthProvider.signOut();
                                     updateDrawer();
                                     break;
                                 case 6:
                                     intent = new Intent(getApplicationContext(), ListEventsActivity.class);
-                                    startActivity(intent);
                                     break;
                                 case 7:
                                     intent = new Intent(getApplicationContext(), CreateEventActivity.class);
-                                    startActivity(intent);
                                     break;
                             }
 
@@ -290,6 +285,11 @@ public class DrawerNavMainActivity extends AppCompatActivity {
                                         .beginTransaction()
                                         .replace(R.id.content_container, mFragment)
                                         .commit();
+                            }
+
+                            if(intent != null){
+                                intent.putExtra("SELECTED_DRAWER_ITEM", drawerItem.getIdentifier());
+                                startActivity(intent);
                             }
 
                             return false;
@@ -301,7 +301,6 @@ public class DrawerNavMainActivity extends AppCompatActivity {
 
     public void updateDrawer() {
         mDrawer.removeHeader();
-        setupDrawerHeader();
         setupDrawer();
     }
 }

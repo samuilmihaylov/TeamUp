@@ -12,7 +12,7 @@ import android.view.View;
 
 public class RecyclerItemListener implements RecyclerView.OnItemTouchListener  {
 
-    private RecyclerTouchListener listener;
+    private RecyclerTouchListener mRecyclerListener;
     private GestureDetector gd;
 
     public interface RecyclerTouchListener {
@@ -20,25 +20,22 @@ public class RecyclerItemListener implements RecyclerView.OnItemTouchListener  {
         public void onLongClickItem(View v, int position);
     }
 
-    public RecyclerItemListener(Context ctx, final RecyclerView rv,
-                                final RecyclerTouchListener listener) {
-        this.listener = listener;
+    public RecyclerItemListener(Context ctx, final RecyclerView rv, final RecyclerTouchListener listener) {
+        this.mRecyclerListener = listener;
         gd = new GestureDetector(ctx,
                 new GestureDetector.SimpleOnGestureListener() {
                     @Override
                     public void onLongPress(MotionEvent e) {
 
-                        // We find the view
                         View v = rv.findChildViewUnder(e.getX(), e.getY());
 
-                        // Notify the even
                         listener.onLongClickItem(v, rv.getChildAdapterPosition(v));
                     }
 
                     @Override
                     public boolean onSingleTapUp(MotionEvent e) {
                         View v = rv.findChildViewUnder(e.getX(), e.getY());
-                        // Notify the even
+
                         listener.onClickItem(v, rv.getChildAdapterPosition(v));
                         return true;
                     }
