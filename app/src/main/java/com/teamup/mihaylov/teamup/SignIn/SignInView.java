@@ -17,7 +17,7 @@ import com.teamup.mihaylov.teamup.SignUp.SignUpActivity;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SignInFragment extends Fragment implements SignInContracts.View {
+public class SignInView extends Fragment implements SignInContracts.View {
 
     private SignInContracts.Presenter mPresenter;
 
@@ -69,8 +69,12 @@ public class SignInFragment extends Fragment implements SignInContracts.View {
         }
     };
 
-    public SignInFragment() {
+    public SignInView() {
         // Required empty public constructor
+    }
+
+    public static SignInView newInstance() {
+        return new SignInView();
     }
 
     @Override
@@ -94,10 +98,6 @@ public class SignInFragment extends Fragment implements SignInContracts.View {
         mBtnResetPassword.setOnClickListener(mBtnResetPasswordListener);
 
         return view;
-    }
-
-    public static SignInFragment newInstance() {
-        return new SignInFragment();
     }
 
     @Override

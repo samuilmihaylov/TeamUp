@@ -9,7 +9,7 @@ import javax.inject.Inject;
 
 public class CreateEventActivity extends DrawerNavMainActivity {
 
-    private CreateEventFragment mCreateEventView;
+    private CreateEventView mCreateEventView;
     private String mTime;
     private String mDate;
 
@@ -22,7 +22,7 @@ public class CreateEventActivity extends DrawerNavMainActivity {
 
         setContentView(R.layout.activity_main);
 
-        mCreateEventView = CreateEventFragment.newInstance();
+        mCreateEventView = CreateEventView.newInstance();
 
         mCreateEventView.setPresenter(mCreateEventPresenter);
 

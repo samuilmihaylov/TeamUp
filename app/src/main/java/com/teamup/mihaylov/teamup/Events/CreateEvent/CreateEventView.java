@@ -14,14 +14,13 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.teamup.mihaylov.teamup.DrawerNavMain.DrawerNavMainActivity;
 import com.teamup.mihaylov.teamup.Events.ListEvents.ListEventsActivity;
 import com.teamup.mihaylov.teamup.R;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CreateEventFragment extends Fragment implements CreateEventContracts.View {
+public class CreateEventView extends Fragment implements CreateEventContracts.View {
     private final int DATEPICKER_FRAGMENT = 1;
     private final int TIMEPICKER_FRAGMENT = 2;
 
@@ -60,7 +59,7 @@ public class CreateEventFragment extends Fragment implements CreateEventContract
         @Override
         public void onClick(View view) {
             DialogFragment newFragment = new EventDatePickerFragment();
-            newFragment.setTargetFragment(CreateEventFragment.this, DATEPICKER_FRAGMENT);
+            newFragment.setTargetFragment(CreateEventView.this, DATEPICKER_FRAGMENT);
             newFragment.show(getActivity().getSupportFragmentManager().beginTransaction(), "date_picker");
         }
     };
@@ -69,19 +68,19 @@ public class CreateEventFragment extends Fragment implements CreateEventContract
         @Override
         public void onClick(View view) {
             DialogFragment newFragment = new EventTimePickerFragment();
-            newFragment.setTargetFragment(CreateEventFragment.this, TIMEPICKER_FRAGMENT);
+            newFragment.setTargetFragment(CreateEventView.this, TIMEPICKER_FRAGMENT);
             newFragment.show(getActivity().getSupportFragmentManager().beginTransaction(), "time_picker");
         }
     };
 
     private CreateEventContracts.Presenter mPresenter;
 
-    public CreateEventFragment() {
+    public CreateEventView() {
         // Required empty public constructor
     }
 
-    public static CreateEventFragment newInstance() {
-        return new CreateEventFragment();
+    public static CreateEventView newInstance() {
+        return new CreateEventView();
     }
 
     @Override
