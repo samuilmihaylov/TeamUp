@@ -1,5 +1,9 @@
 package com.teamup.mihaylov.teamup.base.data;
 
+import com.teamup.mihaylov.teamup.base.models.Event;
+
+import java.util.ArrayList;
+
 import io.reactivex.Observable;
 
 /**
@@ -8,7 +12,7 @@ import io.reactivex.Observable;
 
 public abstract class BaseData<T> {
 
-    public abstract Observable<T[]> getAll();
+    public abstract Observable<ArrayList<Event>> getAll();
 
     public abstract Observable<T> getById(String id);
 
