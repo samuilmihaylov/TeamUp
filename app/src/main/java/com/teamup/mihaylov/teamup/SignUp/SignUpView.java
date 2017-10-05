@@ -13,8 +13,9 @@ import android.widget.ProgressBar;
 
 import com.teamup.mihaylov.teamup.R;
 import com.teamup.mihaylov.teamup.SignIn.SignInActivity;
+import com.teamup.mihaylov.teamup.UserProfile.UserProfileActivity;
 
-public class SignUpFragment extends Fragment {
+public class SignUpView extends Fragment implements SignUpContracts.View {
 
     private Button mBtnSignIn;
     private Button mBtnSignUp;
@@ -24,6 +25,8 @@ public class SignUpFragment extends Fragment {
     private EditText mInputFirstName;
     private EditText mInputLastName;
     private ProgressBar mProgressBar;
+
+    private SignUpContracts.Presenter mPresenter;
 
     private Button.OnClickListener mBtnSignInListener = new Button.OnClickListener() {
         @Override
@@ -40,21 +43,19 @@ public class SignUpFragment extends Fragment {
             String password = mInputPassword.getText().toString().trim();
             String firstName = mInputFirstName.getText().toString().trim();
             String lastName = mInputLastName.getText().toString().trim();
-
             String displayName = firstName + " " + lastName;
 
             if (TextUtils.isEmpty(email)) {
                 mInputEmail.setError("Enter email address!");
-            }
-            else if (TextUtils.isEmpty(password)) {
+            } else if (TextUtils.isEmpty(password)) {
                 mInputPassword.setError("Enter password!");
-            }
-            else if (password.length() < 6) {
+            } else if (password.length() < 6) {
                 mInputPassword.setError("Password too short, enter minimum 6 characters!");
-            }
-            else {
+            } else {
                 mProgressBar.setVisibility(View.VISIBLE);
-                ((SignUpActivity)getActivity()).emailSignUp(email, password, displayName);
+                mPresenter.signUpWithEmail(email, password, displayName);
+                Intent intent = new Intent(getActivity(), UserProfileActivity.class);
+                startActivity(intent);
             }
         }
     };
@@ -66,8 +67,13 @@ public class SignUpFragment extends Fragment {
         }
     };
 
-    public SignUpFragment() {
+    public SignUpView() {
         // Required empty public constructor
+    }
+
+
+    public static SignUpView newInstance() {
+        return new SignUpView();
     }
 
     @Override
@@ -95,6 +101,24 @@ public class SignUpFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mProgressBar.setVisibility(View.GONE);
+        mPresenter.subscribe(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPresenter.unsubscribe();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.unsubscribe();
+        mPresenter = null;
+    }
+
+    @Override
+    public void setPresenter(SignUpContracts.Presenter presenter) {
+        mPresenter = presenter;
     }
 }
