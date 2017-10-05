@@ -5,21 +5,27 @@ import android.os.Bundle;
 import com.teamup.mihaylov.teamup.DrawerNavMain.DrawerNavMainActivity;
 import com.teamup.mihaylov.teamup.R;
 
+import javax.inject.Inject;
+
 public class ListEventsActivity extends DrawerNavMainActivity {
 
-    private ListEventsFragment mListEventsFragment;
+    @Inject
+    ListEventsContracts.Presenter mListEventsPresenter;
+
+    private ListEventsView mListEventsView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mListEventsFragment = new ListEventsFragment();
+        mListEventsView = ListEventsView.newInstance();
+
+        mListEventsView.setPresenter(mListEventsPresenter);
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.content_container, mListEventsFragment)
+                .replace(R.id.content_container, mListEventsView)
                 .commit();
-
     }
 }

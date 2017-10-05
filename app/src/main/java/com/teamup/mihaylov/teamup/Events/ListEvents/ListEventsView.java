@@ -12,11 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.teamup.mihaylov.teamup.Events.EventDetails.EventDetailsActivity;
 import com.teamup.mihaylov.teamup.R;
 import com.teamup.mihaylov.teamup.base.models.Event;
@@ -26,23 +23,30 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ListEventsFragment extends Fragment {
+public class ListEventsView extends Fragment implements ListEventsContracts.View{
 
-    private DatabaseReference mDatabase;
     private ArrayList<Event> mEventsList;
     private RecyclerView mRecyclerView;
     private EventsAdapter mAdapter;
+    private ListEventsContracts.Presenter mPresenter;
 
-    public ListEventsFragment() {
+    public ListEventsView() {
         // Required empty public constructor
+    }
+
+    public static ListEventsView newInstance() {
+        return new ListEventsView();
+    }
+
+    @Override
+    public void setPresenter(ListEventsContracts.Presenter presenter) {
+        mPresenter = presenter;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_list_events, container, false);
-
-        mDatabase = FirebaseDatabase.getInstance().getReference("events");
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.events_list);
         mRecyclerView.setHasFixedSize(true);
@@ -53,28 +57,8 @@ public class ListEventsFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
 
         mEventsList = new ArrayList<>();
-
-        mDatabase.addValueEventListener(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                mEventsList.clear();
-
-                for (DataSnapshot postSnapshot: snapshot.getChildren()) {
-                    Event event = postSnapshot.getValue(Event.class);
-                    mEventsList.add(event);
-                }
-
-                mAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
         mAdapter = new EventsAdapter(mEventsList);
+
         mRecyclerView.setAdapter(mAdapter);
 
         mRecyclerView.addOnItemTouchListener(new RecyclerItemListener(getActivity().getApplicationContext(), mRecyclerView,
@@ -97,5 +81,31 @@ public class ListEventsFragment extends Fragment {
                 }));
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.subscribe(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPresenter.unsubscribe();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.unsubscribe();
+        mPresenter = null;
+    }
+
+    @Override
+    public void setEvents(ArrayList<Event> events) {
+        mEventsList.clear();
+        mEventsList.addAll(events);
+        mAdapter.notifyDataSetChanged();
     }
 }
