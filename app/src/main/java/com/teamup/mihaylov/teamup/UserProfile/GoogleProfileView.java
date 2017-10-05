@@ -11,22 +11,27 @@ import android.widget.Button;
 import com.teamup.mihaylov.teamup.DrawerNavMain.DrawerNavMainActivity;
 import com.teamup.mihaylov.teamup.R;
 
-public class GoogleProfileFragment extends Fragment {
+public class GoogleProfileView extends Fragment implements UserProfileContracts.View{
 
     private Button btnSignOut;
+
+    private UserProfileContracts.Presenter mPresenter;
 
     private Button.OnClickListener btnSignOutListener = new Button.OnClickListener() {
         @Override
         public void onClick(View view) {
-            ((UserProfileActivity) getActivity()).googleSignOut();
+            mPresenter.googleSignOut();
             Intent intent = new Intent(getActivity(), DrawerNavMainActivity.class);
             startActivity(intent);
         }
     };
 
-
-    public GoogleProfileFragment() {
+    public GoogleProfileView() {
         // Required empty public constructor
+    }
+
+    public static GoogleProfileView newInstance() {
+        return new GoogleProfileView();
     }
 
     @Override
@@ -38,5 +43,29 @@ public class GoogleProfileFragment extends Fragment {
         btnSignOut.setOnClickListener(btnSignOutListener);
 
         return view;
+    }
+
+    @Override
+    public void setPresenter(UserProfileContracts.Presenter presenter) {
+        mPresenter = presenter;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.subscribe(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPresenter.unsubscribe();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.unsubscribe();
+        mPresenter = null;
     }
 }

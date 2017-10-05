@@ -16,7 +16,7 @@ import com.teamup.mihaylov.teamup.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserBasicProfileFragment extends Fragment {
+public class UserBasicProfileView extends Fragment implements UserProfileContracts.View {
 
     private Button changeEmailBtnTrigger;
     private Button changePasswordBtnTrigger;
@@ -32,10 +32,6 @@ public class UserBasicProfileFragment extends Fragment {
     private EditText newPassword;
     private ProgressBar progressBar;
 
-    public UserBasicProfileFragment() {
-        // Required empty public constructor
-    }
-
     private Button.OnClickListener btnChangeEmailListener = new Button.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -44,7 +40,7 @@ public class UserBasicProfileFragment extends Fragment {
             if (email.trim().equals("")) {
                 newEmail.setError("Enter email!");
             } else {
-                ((UserProfileActivity) getActivity()).changeEmail(email);
+                mPresenter.changeEmail(email);
             }
         }
     };
@@ -59,7 +55,7 @@ public class UserBasicProfileFragment extends Fragment {
             } else if (password.trim().equals("")) {
                 newPassword.setError("Enter password");
             } else {
-                ((UserProfileActivity) getActivity()).changePassword(password);
+                mPresenter.changePassword(password);
             }
         }
     };
@@ -73,7 +69,7 @@ public class UserBasicProfileFragment extends Fragment {
             if (email.trim().equals("")) {
                 currentEmail.setError("Enter email");
             } else {
-                ((UserProfileActivity) getActivity()).sendPasswordResetEmail(email);
+                mPresenter.sendPasswordResetEmail(email);
             }
         }
     };
@@ -81,7 +77,7 @@ public class UserBasicProfileFragment extends Fragment {
     private Button.OnClickListener btnSignOutListener = new Button.OnClickListener() {
         @Override
         public void onClick(View view) {
-            ((UserProfileActivity) getActivity()).emailSignOut();
+            mPresenter.signOut();
             Intent intent = new Intent(getActivity(), DrawerNavMainActivity.class);
             startActivity(intent);
         }
@@ -125,6 +121,21 @@ public class UserBasicProfileFragment extends Fragment {
             btnSendEmail.setVisibility(View.VISIBLE);
         }
     };
+
+    private UserProfileContracts.Presenter mPresenter;
+
+    public UserBasicProfileView() {
+        // Required empty public constructor
+    }
+
+    public static UserBasicProfileView newInstance() {
+        return new UserBasicProfileView();
+    }
+
+    @Override
+    public void setPresenter(UserProfileContracts.Presenter presenter) {
+        mPresenter = presenter;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -174,10 +185,22 @@ public class UserBasicProfileFragment extends Fragment {
         btnChangePassword.setVisibility(View.GONE);
         btnSendEmail.setVisibility(View.GONE);
     }
-
     @Override
     public void onResume() {
         super.onResume();
-        progressBar.setVisibility(View.GONE);
+        mPresenter.subscribe(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPresenter.unsubscribe();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.unsubscribe();
+        mPresenter = null;
     }
 }
