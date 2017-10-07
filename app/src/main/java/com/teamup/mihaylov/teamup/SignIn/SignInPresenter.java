@@ -4,6 +4,8 @@ import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
+
 /**
  * Created by samui on 3.10.2017 г..
  */
@@ -28,12 +30,12 @@ class SignInPresenter implements SignInContracts.Presenter {
     }
 
     @Override
-    public void signInWithEmail(String email, String password) {
-        mAuthenticationProvider.signInWithEmail(email, password);
+    public void setAuth(AuthenticationProvider authProvider) {
+        mAuthenticationProvider = authProvider;
     }
 
     @Override
-    public void setAuth(AuthenticationProvider authProvider) {
-        mAuthenticationProvider = authProvider;
+    public Observable<Boolean> signInWithEmail(String email, String password) {
+        return mAuthenticationProvider.signInWithEmail(email, password);
     }
 }

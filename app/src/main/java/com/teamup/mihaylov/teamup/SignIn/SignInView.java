@@ -14,6 +14,10 @@ import com.teamup.mihaylov.teamup.DrawerNavMain.DrawerNavMainActivity;
 import com.teamup.mihaylov.teamup.R;
 import com.teamup.mihaylov.teamup.SignUp.SignUpActivity;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -39,10 +43,27 @@ public class SignInView extends Fragment implements SignInContracts.View {
 
             mProgressBar.setVisibility(View.VISIBLE);
 
-            mPresenter.signInWithEmail(email, password);
-
-            Intent intent = new Intent(getActivity(), DrawerNavMainActivity.class);
-            startActivity(intent);
+            mPresenter.signInWithEmail(email, password)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<Boolean>() {
+                        @Override
+                        public void accept(Boolean isSuccessful) throws Exception {
+                            if(isSuccessful){
+                                Intent intent = new Intent(getActivity(), DrawerNavMainActivity.class);
+                                startActivity(intent);
+                            }
+                            else{
+                                Intent intent = new Intent(getActivity(), SignInActivity.class);
+                                startActivity(intent);
+                            }
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) throws Exception {
+                            throwable.printStackTrace();
+                        }
+                    });
         }
     };
 

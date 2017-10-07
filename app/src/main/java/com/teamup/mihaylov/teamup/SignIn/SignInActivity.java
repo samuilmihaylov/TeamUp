@@ -3,6 +3,7 @@ package com.teamup.mihaylov.teamup.SignIn;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -16,8 +17,15 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.teamup.mihaylov.teamup.DrawerNavMain.DrawerNavMainActivity;
 import com.teamup.mihaylov.teamup.R;
 import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
+import com.teamup.mihaylov.teamup.base.data.RemoteUsersData;
+import com.teamup.mihaylov.teamup.base.models.User;
 
 import javax.inject.Inject;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 public class SignInActivity extends DrawerNavMainActivity {
 
@@ -26,7 +34,7 @@ public class SignInActivity extends DrawerNavMainActivity {
 
     @Inject
     AuthenticationProvider mAuthProvider;
-
+    
     private SignInView mView;
     private static final int RC_SIGN_IN = 9001;
     private GoogleApiClient mGoogleApiClient;
@@ -67,12 +75,13 @@ public class SignInActivity extends DrawerNavMainActivity {
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        final AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuthProvider.getFirebaseInstance().signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+
                             Intent intent = new Intent(getApplicationContext(), DrawerNavMainActivity.class);
                             startActivity(intent);
                         } else {
