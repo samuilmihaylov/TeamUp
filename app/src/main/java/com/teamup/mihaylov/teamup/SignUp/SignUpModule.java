@@ -1,5 +1,8 @@
 package com.teamup.mihaylov.teamup.SignUp;
 
+import com.teamup.mihaylov.teamup.base.data.RemoteUsersData;
+import com.teamup.mihaylov.teamup.base.models.User;
+
 import dagger.Module;
 import dagger.Provides;
 

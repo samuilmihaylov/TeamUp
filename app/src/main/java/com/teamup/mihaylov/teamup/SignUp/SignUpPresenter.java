@@ -1,8 +1,12 @@
 package com.teamup.mihaylov.teamup.SignUp;
 
 import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
+import com.teamup.mihaylov.teamup.base.data.RemoteUsersData;
+import com.teamup.mihaylov.teamup.base.models.User;
 
 import javax.inject.Inject;
+
+import io.reactivex.Observable;
 
 /**
  * Created by samui on 5.10.2017 г..
@@ -18,8 +22,8 @@ public class SignUpPresenter implements SignUpContracts.Presenter {
     }
 
     @Override
-    public void signUpWithEmail(String email, String password, String displayName) {
-        mAuthenticationProvider.signUpWithEmail(email, password, displayName);
+    public Observable<Boolean> signUpWithEmail(String email, String password, String displayName) {
+       return mAuthenticationProvider.signUpWithEmail(email, password, displayName);
     }
 
     @Override

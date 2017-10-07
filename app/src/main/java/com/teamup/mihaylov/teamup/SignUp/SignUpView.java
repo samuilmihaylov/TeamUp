@@ -11,9 +11,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
+import com.teamup.mihaylov.teamup.DrawerNavMain.DrawerNavMainActivity;
 import com.teamup.mihaylov.teamup.R;
 import com.teamup.mihaylov.teamup.SignIn.SignInActivity;
 import com.teamup.mihaylov.teamup.UserProfile.UserProfileActivity;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 public class SignUpView extends Fragment implements SignUpContracts.View {
 
@@ -53,9 +58,29 @@ public class SignUpView extends Fragment implements SignUpContracts.View {
                 mInputPassword.setError("Password too short, enter minimum 6 characters!");
             } else {
                 mProgressBar.setVisibility(View.VISIBLE);
-                mPresenter.signUpWithEmail(email, password, displayName);
-                Intent intent = new Intent(getActivity(), UserProfileActivity.class);
-                startActivity(intent);
+
+                mPresenter
+                        .signUpWithEmail(email, password, displayName)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Consumer<Boolean>() {
+                            @Override
+                            public void accept(Boolean isSuccessful) throws Exception {
+                                if(isSuccessful){
+                                    Intent intent = new Intent(getActivity(), DrawerNavMainActivity.class);
+                                    startActivity(intent);
+                                }
+                                else{
+                                    Intent intent = new Intent(getActivity(), SignUpActivity.class);
+                                    startActivity(intent);
+                                }
+                            }
+                        }, new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable throwable) throws Exception {
+                                throwable.printStackTrace();
+                            }
+                        });
             }
         }
     };
