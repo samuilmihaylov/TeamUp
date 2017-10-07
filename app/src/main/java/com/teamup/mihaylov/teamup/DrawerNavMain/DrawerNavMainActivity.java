@@ -1,16 +1,26 @@
 package com.teamup.mihaylov.teamup.DrawerNavMain;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseUser;
@@ -38,16 +48,28 @@ import com.teamup.mihaylov.teamup.R;
 import com.teamup.mihaylov.teamup.SignIn.SignInActivity;
 import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import dagger.android.support.DaggerAppCompatActivity;
 
 public class DrawerNavMainActivity extends DaggerAppCompatActivity {
 
+    private static final int CAMERA_REQUEST = 1;
+    private static final int REQUEST_WRITE_PERMISSION = 2;
+    private static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 3;
     private Fragment mFragment;
 
     private Toolbar mToolbar;
     private Drawer mDrawer;
+    private File photoFile;
+    private String mCurrentPhotoPath;
     private DrawerBuilder mDrawerBuilder;
     private AccountHeader mHeaderResult;
     private PrimaryDrawerItem mHomeDrawerItem;
@@ -85,7 +107,7 @@ public class DrawerNavMainActivity extends DaggerAppCompatActivity {
         super.onStop();
     }
 
-    public void setupDrawerHeaderProfileImage(){
+    public void setupDrawerHeaderProfileImage() {
         DrawerImageLoader.init(new AbstractDrawerImageLoader() {
             @Override
             public void set(ImageView imageView, Uri uri, Drawable placeholder, String tag) {
@@ -141,10 +163,98 @@ public class DrawerNavMainActivity extends DaggerAppCompatActivity {
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
                     public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
-                        return false;
+                        if (mAuthProvider.getUser().getProviderId().equals("email")){
+                            if(checkAndRequestPermissions()){
+                                openCamera();
+                            }
+                        }
+                            return false;
                     }
                 })
                 .build();
+    }
+
+    private boolean checkAndRequestPermissions() {
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.CAMERA);
+        }
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),
+                    REQUEST_ID_MULTIPLE_PERMISSIONS);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_ID_MULTIPLE_PERMISSIONS: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getApplicationContext(), "Permission granted", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Permission denied", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            }
+        }
+    }
+
+    private void openCamera() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        String imageFileName = "profile_image.jpg";
+
+        File path = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "TeamUp");
+
+        try {
+            if (!path.exists()) {
+                path.mkdirs();
+            }
+
+            File imageFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                    "TeamUp" + File.separator + imageFileName);
+
+            Uri imageUri = FileProvider.getUriForFile(getApplicationContext(), "com.TeamUpApplication.android.fileprovider", imageFile);
+
+            takePictureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            startActivityForResult(takePictureIntent, CAMERA_REQUEST);
+
+            MediaScannerConnection.scanFile(this,
+                    new String[]{imageFile.toString()}, null,
+                    new MediaScannerConnection.OnScanCompletedListener() {
+                        public void onScanCompleted(String path, Uri uri) {
+                            Log.i("ExternalStorage", "Scanned " + path + ":");
+                            Log.i("ExternalStorage", "-> uri=" + uri);
+                        }
+                    });
+        } catch (Exception e) {
+            Log.w("ExternalStorage", "Error writing ", e);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) {
+            switch (resultCode) {
+                case Activity.RESULT_OK: {
+                    Toast.makeText(getApplicationContext(), "saved", Toast.LENGTH_LONG).show();
+                    break;
+                }
+                case Activity.RESULT_CANCELED: {
+                    Toast.makeText(getApplicationContext(), "not saved", Toast.LENGTH_LONG).show();
+                    break;
+                }
+            }
+        }
     }
 
     public void setupDrawerItems() {
@@ -234,7 +344,7 @@ public class DrawerNavMainActivity extends DaggerAppCompatActivity {
                                         .commit();
                             }
 
-                            if(intent != null){
+                            if (intent != null) {
                                 intent.putExtra("SELECTED_DRAWER_ITEM", drawerItem.getIdentifier());
                                 startActivity(intent);
                             }
@@ -284,7 +394,7 @@ public class DrawerNavMainActivity extends DaggerAppCompatActivity {
                                         .commit();
                             }
 
-                            if(intent != null){
+                            if (intent != null) {
                                 intent.putExtra("SELECTED_DRAWER_ITEM", drawerItem.getIdentifier());
                                 startActivity(intent);
                             }
