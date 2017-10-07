@@ -3,14 +3,20 @@ package com.teamup.mihaylov.teamup.UserProfile;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 
 import com.teamup.mihaylov.teamup.DrawerNavMain.DrawerNavMainActivity;
+import com.teamup.mihaylov.teamup.Events.ListEvents.ListCreatedEvents.ListCreatedEventsActivity;
+import com.teamup.mihaylov.teamup.Events.ListEvents.ListJoinedEvents.ListJoinedEventsActivity;
 import com.teamup.mihaylov.teamup.R;
 
 /**
@@ -122,6 +128,25 @@ public class UserBasicProfileView extends Fragment implements UserProfileContrac
         }
     };
 
+    private Spinner.OnItemSelectedListener spinnerSelectListener = new Spinner.OnItemSelectedListener() {
+
+        @Override
+        public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
+            if (pos == 1) {
+                Intent intent = new Intent(getContext(), ListJoinedEventsActivity.class);
+                startActivity(intent);
+            } else if (pos == 2) {
+                Intent intent = new Intent(getContext(), ListCreatedEventsActivity.class);
+                startActivity(intent);
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+
+        }
+    };
+
     private UserProfileContracts.Presenter mPresenter;
 
     public UserBasicProfileView() {
@@ -142,6 +167,13 @@ public class UserBasicProfileView extends Fragment implements UserProfileContrac
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_basic_profile, container, false);
+
+        Spinner spinner = (Spinner) view.findViewById(R.id.my_collections);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.my_collections_dropdown, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(spinnerSelectListener);
 
         changeEmailBtnTrigger = (Button) view.findViewById(R.id.change_email_button);
         changeEmailBtnTrigger.setOnClickListener(changeEmailBtnTriggerListener);
@@ -185,6 +217,7 @@ public class UserBasicProfileView extends Fragment implements UserProfileContrac
         btnChangePassword.setVisibility(View.GONE);
         btnSendEmail.setVisibility(View.GONE);
     }
+
     @Override
     public void onResume() {
         super.onResume();

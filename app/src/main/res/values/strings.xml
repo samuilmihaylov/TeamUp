@@ -48,4 +48,10 @@
     <string name="btn_join_event">Join</string>
     <string name="btn_edit_event">Edit</string>
     <string name="btn_leave_event">Leave</string>
+
+    <string-array name="my_collections_dropdown">
+        <item>My Collections</item>
+        <item>Joined Events</item>
+        <item>Created Events</item>
+    </string-array>
 </resources>
