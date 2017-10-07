@@ -1,4 +1,4 @@
-package com.teamup.mihaylov.teamup.Events.ListEvents;
+package com.teamup.mihaylov.teamup.Events.ListEvents.base;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

@@ -12,9 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.teamup.mihaylov.teamup.Events.EventDetails.EventDetailsActivity;
+import com.teamup.mihaylov.teamup.Events.ListEvents.base.EventsAdapter;
+import com.teamup.mihaylov.teamup.Events.ListEvents.base.RecyclerItemListener;
 import com.teamup.mihaylov.teamup.R;
 import com.teamup.mihaylov.teamup.base.models.Event;
 
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ListEventsView extends Fragment implements ListEventsContracts.View{
+public class ListEventsView extends Fragment implements ListEventsContracts.View {
 
     private ArrayList<Event> mEventsList;
     private RecyclerView mRecyclerView;

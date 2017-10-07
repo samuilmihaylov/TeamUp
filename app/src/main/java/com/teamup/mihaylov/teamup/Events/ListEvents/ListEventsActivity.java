@@ -12,20 +12,20 @@ public class ListEventsActivity extends DrawerNavMainActivity {
     @Inject
     ListEventsContracts.Presenter mListEventsPresenter;
 
-    private ListEventsView mListEventsView;
+    private ListEventsView mView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mListEventsView = ListEventsView.newInstance();
+        mView = ListEventsView.newInstance();
 
-        mListEventsView.setPresenter(mListEventsPresenter);
+        mView.setPresenter(mListEventsPresenter);
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.content_container, mListEventsView)
+                .replace(R.id.content_container, mView)
                 .commit();
     }
 }

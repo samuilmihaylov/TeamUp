@@ -1,8 +1,10 @@
 package com.teamup.mihaylov.teamup.Events.EventDetails;
 
 import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
-import com.teamup.mihaylov.teamup.base.data.RemoteData;
+import com.teamup.mihaylov.teamup.base.data.RemoteEventsData;
+import com.teamup.mihaylov.teamup.base.data.RemoteUsersData;
 import com.teamup.mihaylov.teamup.base.models.Event;
+import com.teamup.mihaylov.teamup.base.models.User;
 
 import javax.inject.Inject;
 
@@ -13,15 +15,19 @@ import javax.inject.Inject;
 public class EventDetailsPresenter implements EventDetailsContracts.Presenter {
 
     private final AuthenticationProvider mAuthProvider;
-    private final RemoteData<Event> mRemoteData;
+    private final RemoteEventsData<Event> mEventsData;
+    private final RemoteUsersData<User> mUsersData;
     private Event mEvent;
     private String mEventId;
     private EventDetailsContracts.View mView;
 
     @Inject
-    EventDetailsPresenter(AuthenticationProvider authProvider, RemoteData<Event> remoteData){
+    EventDetailsPresenter(AuthenticationProvider authProvider,
+                          RemoteEventsData<Event> eventsData,
+                          RemoteUsersData<User> usersData){
         mAuthProvider = authProvider;
-        mRemoteData = remoteData;
+        mEventsData = eventsData;
+        mUsersData = usersData;
     }
 
     @Override
@@ -61,15 +67,19 @@ public class EventDetailsPresenter implements EventDetailsContracts.Presenter {
 
     @Override
     public void joinEvent(){
-        this.mEvent.addParticipant(mAuthProvider.getUser().getUid());
-        mRemoteData.setKey(mEventId);
-        mRemoteData.add(mEvent);
+        String userId = mAuthProvider.getUser().getUid();
+        this.mEvent.addParticipant(userId);
+        mEventsData.setKey(mEventId);
+        mEventsData.add(mEvent);
+        mUsersData.addJoinedEvent(userId, mEventId, mEvent);
     }
 
     @Override
     public void leaveEvent(){
-        this.mEvent.removeParticipant(mAuthProvider.getUser().getUid());
-        mRemoteData.setKey(mEventId);
-        mRemoteData.add(mEvent);
+        String userId = mAuthProvider.getUser().getUid();
+        this.mEvent.removeParticipant(userId);
+        mEventsData.setKey(mEventId);
+        mEventsData.add(mEvent);
+        mUsersData.removeJoinedEvent(userId, mEventId);
     }
 }

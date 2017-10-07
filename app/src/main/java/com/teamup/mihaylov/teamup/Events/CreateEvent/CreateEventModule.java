@@ -1,8 +1,10 @@
 package com.teamup.mihaylov.teamup.Events.CreateEvent;
 
 import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
-import com.teamup.mihaylov.teamup.base.data.RemoteData;
+import com.teamup.mihaylov.teamup.base.data.RemoteEventsData;
+import com.teamup.mihaylov.teamup.base.data.RemoteUsersData;
 import com.teamup.mihaylov.teamup.base.models.Event;
+import com.teamup.mihaylov.teamup.base.models.User;
 
 import javax.inject.Named;
 
@@ -16,7 +18,10 @@ import dagger.Provides;
 @Module()
 public class CreateEventModule {
     @Provides
-    CreateEventContracts.Presenter provideCreateEventPresenter(AuthenticationProvider authProvider, RemoteData<Event> data){
-        return new CreateEventPresenter(authProvider, data);
+    CreateEventContracts.Presenter provideCreateEventPresenter(
+            AuthenticationProvider authProvider,
+            RemoteEventsData<Event> eventsData,
+            RemoteUsersData<User> usersData){
+        return new CreateEventPresenter(authProvider, eventsData, usersData);
     }
 }

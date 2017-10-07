@@ -1,13 +1,21 @@
 package com.teamup.mihaylov.teamup.Events.CreateEvent;
 
+import android.util.Log;
+
 import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
-import com.teamup.mihaylov.teamup.base.data.BaseData;
-import com.teamup.mihaylov.teamup.base.data.RemoteData;
+import com.teamup.mihaylov.teamup.base.data.RemoteEventsData;
+import com.teamup.mihaylov.teamup.base.data.RemoteUsersData;
 import com.teamup.mihaylov.teamup.base.models.Event;
+import com.teamup.mihaylov.teamup.base.models.User;
 
 import java.util.ArrayList;
 
 import javax.inject.Inject;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by samui on 4.10.2017 г..
@@ -15,16 +23,21 @@ import javax.inject.Inject;
 
 public class CreateEventPresenter implements CreateEventContracts.Presenter {
 
-    private final RemoteData<Event> mRemoteData;
+    private final RemoteEventsData<Event> mRemoteEventsData;
     private final AuthenticationProvider mAuthProvider;
     private final String mCurrentUserName;
     private final String mCurrentUserId;
+    private final RemoteUsersData<User> mRemoteUsersData;
+
     private CreateEventContracts.View mView;
 
     @Inject
-    public CreateEventPresenter(AuthenticationProvider authProvider, RemoteData<Event> remoteData) {
+    public CreateEventPresenter(AuthenticationProvider authProvider,
+                                RemoteEventsData<Event> remoteEventsData,
+                                RemoteUsersData<User> remoteUsersData) {
         mAuthProvider = authProvider;
-        mRemoteData = remoteData;
+        mRemoteEventsData = remoteEventsData;
+        mRemoteUsersData = remoteUsersData;
 
         mCurrentUserName = mAuthProvider.getUser().getDisplayName();
         mCurrentUserId = mAuthProvider.getUser().getUid();
@@ -41,14 +54,23 @@ public class CreateEventPresenter implements CreateEventContracts.Presenter {
     }
 
     @Override
-    public void addEvent(String eventName, String eventDescription, String date, String time) {
-        ArrayList<String> participants = new ArrayList<String>();
-        participants.add(mAuthProvider.getUserId());
+    public void addEvent(final String eventName, final String eventDescription, final String date, final String time) {
 
-        String eventId = mRemoteData.getKey();
+        final String eventId = mRemoteEventsData.getKey();
+        ArrayList<String> participants = new ArrayList<>();
+        participants.add(mCurrentUserId);
 
-        Event event = new Event(eventId, eventName, eventDescription, date, time, mCurrentUserName, mCurrentUserId, participants);
+        Event event = new Event(
+                eventId,
+                eventName,
+                eventDescription,
+                date,
+                time,
+                mCurrentUserName,
+                mCurrentUserId,
+                participants);
 
-        mRemoteData.add(event);
+        mRemoteEventsData.add(event);
+        mRemoteUsersData.addCreatedEvent(mCurrentUserId, eventId, event);
     }
 }

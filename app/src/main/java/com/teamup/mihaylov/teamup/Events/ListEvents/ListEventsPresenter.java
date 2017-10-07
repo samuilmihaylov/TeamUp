@@ -1,8 +1,6 @@
 package com.teamup.mihaylov.teamup.Events.ListEvents;
 
-import android.util.Log;
-
-import com.teamup.mihaylov.teamup.base.data.RemoteData;
+import com.teamup.mihaylov.teamup.base.data.RemoteEventsData;
 import com.teamup.mihaylov.teamup.base.models.Event;
 
 import java.util.ArrayList;
@@ -20,11 +18,11 @@ import io.reactivex.schedulers.Schedulers;
 
 public class ListEventsPresenter implements ListEventsContracts.Presenter {
 
-    private final RemoteData<Event> mRemoteData;
+    private final RemoteEventsData<Event> mRemoteData;
     private ListEventsContracts.View mView;
 
     @Inject
-    ListEventsPresenter(RemoteData<Event> data) {
+    ListEventsPresenter(RemoteEventsData<Event> data) {
         mRemoteData = data;
     }
 

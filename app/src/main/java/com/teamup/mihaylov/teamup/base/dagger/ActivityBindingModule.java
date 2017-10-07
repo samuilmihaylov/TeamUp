@@ -5,8 +5,12 @@ import com.teamup.mihaylov.teamup.Events.CreateEvent.CreateEventActivity;
 import com.teamup.mihaylov.teamup.Events.CreateEvent.CreateEventModule;
 import com.teamup.mihaylov.teamup.Events.EventDetails.EventDetailsActivity;
 import com.teamup.mihaylov.teamup.Events.EventDetails.EventDetailsModule;
+import com.teamup.mihaylov.teamup.Events.ListEvents.ListCreatedEvents.ListCreatedEventsActivity;
+import com.teamup.mihaylov.teamup.Events.ListEvents.ListCreatedEvents.ListCreatedEventsModule;
 import com.teamup.mihaylov.teamup.Events.ListEvents.ListEventsActivity;
 import com.teamup.mihaylov.teamup.Events.ListEvents.ListEventsModule;
+import com.teamup.mihaylov.teamup.Events.ListEvents.ListJoinedEvents.ListJoinedEventsActivity;
+import com.teamup.mihaylov.teamup.Events.ListEvents.ListJoinedEvents.ListJoinedEventsModule;
 import com.teamup.mihaylov.teamup.SignIn.SignInActivity;
 import com.teamup.mihaylov.teamup.SignIn.SignInModule;
 import com.teamup.mihaylov.teamup.SignUp.SignUpActivity;
@@ -46,6 +50,14 @@ public abstract class ActivityBindingModule {
     @ActivityScoped
     @ContributesAndroidInjector(modules = {ListEventsModule.class})
     abstract ListEventsActivity listEventsActivity();
+
+    @ActivityScoped
+    @ContributesAndroidInjector(modules = {ListJoinedEventsModule.class})
+    abstract ListJoinedEventsActivity listJoinedEventsActivity();
+
+    @ActivityScoped
+    @ContributesAndroidInjector(modules = {ListCreatedEventsModule.class})
+    abstract ListCreatedEventsActivity listCreatedEventsActivity();
 
     @ActivityScoped
     @ContributesAndroidInjector(modules = {EventDetailsModule.class})

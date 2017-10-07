@@ -1,6 +1,6 @@
 package com.teamup.mihaylov.teamup.Events.ListEvents;
 
-import com.teamup.mihaylov.teamup.base.data.RemoteData;
+import com.teamup.mihaylov.teamup.base.data.RemoteEventsData;
 import com.teamup.mihaylov.teamup.base.models.Event;
 
 import dagger.Module;
@@ -12,7 +12,7 @@ import dagger.Provides;
 @Module()
 public class ListEventsModule {
     @Provides
-    ListEventsContracts.Presenter provideListEventsPresenter(RemoteData<Event> data) {
+    ListEventsContracts.Presenter provideListEventsPresenter(RemoteEventsData<Event> data) {
         return new ListEventsPresenter(data);
     }
 }
