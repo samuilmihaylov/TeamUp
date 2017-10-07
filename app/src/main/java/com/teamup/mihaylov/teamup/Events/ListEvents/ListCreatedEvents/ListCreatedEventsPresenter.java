@@ -1,0 +1,62 @@
+package com.teamup.mihaylov.teamup.Events.ListEvents.ListCreatedEvents;
+
+import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
+import com.teamup.mihaylov.teamup.base.data.RemoteUsersData;
+import com.teamup.mihaylov.teamup.base.models.Event;
+import com.teamup.mihaylov.teamup.base.models.User;
+
+import java.util.ArrayList;
+
+import javax.inject.Inject;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+
+/**
+ * Created by samui on 6.10.2017 г..
+ */
+
+public class ListCreatedEventsPresenter implements ListCreatedEventsContracts.Presenter {
+    private final RemoteUsersData<User> mUsersData;
+    private final AuthenticationProvider mAuth;
+    private ListCreatedEventsContracts.View mView;
+
+    @Inject
+    public ListCreatedEventsPresenter(AuthenticationProvider authProvider, RemoteUsersData<User> usersData) {
+        mUsersData = usersData;
+        mAuth = authProvider;
+    }
+
+    @Override
+    public void load() {
+        Observable<ArrayList<Event>> observable = mUsersData.getCreatedEvents(mAuth.getUserId());
+
+        observable
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<ArrayList<Event>>() {
+                    @Override
+                    public void accept(ArrayList<Event> events) throws Exception {
+                        mView.setEvents(events);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        throwable.printStackTrace();
+                    }
+                });
+    }
+
+    @Override
+    public void subscribe(ListCreatedEventsContracts.View view) {
+        mView = view;
+        load();
+    }
+
+    @Override
+    public void unsubscribe() {
+        mView = null;
+    }
+}
