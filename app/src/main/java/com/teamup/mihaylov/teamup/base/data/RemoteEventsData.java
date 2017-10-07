@@ -5,6 +5,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.teamup.mihaylov.teamup.TeamUpApplication;
 import com.teamup.mihaylov.teamup.base.models.Event;
 
 import java.util.ArrayList;
@@ -19,31 +20,31 @@ import io.reactivex.ObservableOnSubscribe;
  * Created by samui on 3.10.2017 г..
  */
 
-public class RemoteData<T> extends BaseData<T> implements ValueEventListener{
+public class RemoteEventsData<T> implements BaseData<T>, ValueEventListener{
 
     private final DatabaseReference mDatabase;
-    private final ArrayList<Event> mEventsList;
+    private final ArrayList<T> mEventsList;
     private String mKey;
 
     @Inject
-    RemoteData(){
+    RemoteEventsData(){
         mDatabase = FirebaseDatabase.getInstance().getReference("events");
-        mEventsList = new ArrayList<Event>();
+        mEventsList = new ArrayList<>();
         mDatabase.addValueEventListener(this);
     }
 
     @Override
-    public Observable<ArrayList<Event>> getAll() {
-        return Observable.create(new ObservableOnSubscribe<ArrayList<Event>>() {
+    public Observable<ArrayList<T>> getAll() {
+        return Observable.create(new ObservableOnSubscribe<ArrayList<T>>() {
             @Override
-            public void subscribe(final ObservableEmitter<ArrayList<Event>> emitter) throws Exception {
+            public void subscribe(final ObservableEmitter<ArrayList<T>> emitter) throws Exception {
                 mDatabase.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         mEventsList.clear();
                         for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                             Event event = postSnapshot.getValue(Event.class);
-                            mEventsList.add(event);
+                            mEventsList.add((T) event);
                         }
                         emitter.onNext(mEventsList);
                         emitter.onComplete();
@@ -59,11 +60,6 @@ public class RemoteData<T> extends BaseData<T> implements ValueEventListener{
 
     public void setKey(String key){
         mKey = key;
-    }
-
-    @Override
-    public Observable getById(String id) {
-        return null;
     }
 
     public String getKey(){
@@ -88,7 +84,7 @@ public class RemoteData<T> extends BaseData<T> implements ValueEventListener{
 
         for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
             Event event = postSnapshot.getValue(Event.class);
-            mEventsList.add(event);
+            mEventsList.add((T)event);
         }
     }
 

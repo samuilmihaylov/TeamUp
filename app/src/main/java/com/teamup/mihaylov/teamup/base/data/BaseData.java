@@ -10,13 +10,11 @@ import io.reactivex.Observable;
  * Created by samui on 3.10.2017 г..
  */
 
-public abstract class BaseData<T> {
+public interface BaseData<T> {
 
-    public abstract Observable<ArrayList<Event>> getAll();
+    Observable<ArrayList<T>> getAll();
 
-    public abstract Observable<T> getById(String id);
+    void add(T item);
 
-    public abstract void add(T item);
-
-    public abstract Observable<T> remove(T item);
+    Observable<T> remove(T item);
 }

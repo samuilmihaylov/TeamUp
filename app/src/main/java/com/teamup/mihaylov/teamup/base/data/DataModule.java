@@ -1,6 +1,7 @@
 package com.teamup.mihaylov.teamup.base.data;
 
 import com.teamup.mihaylov.teamup.base.models.Event;
+import com.teamup.mihaylov.teamup.base.models.User;
 
 import javax.inject.Named;
 
@@ -11,12 +12,15 @@ import dagger.Provides;
  * Created by samui on 3.10.2017 г..
  */
 
-@Module
+@Module()
 public class DataModule {
+    @Provides
+    BaseData<Event> provideRemoteEventsData() {
+        return new RemoteEventsData<>();
+    }
 
     @Provides
-    @Named("remote")
-    BaseData<Event> provideRemoteEventsData() {
-        return new RemoteData<>();
+    BaseData<User> provideRemoteUsersData() {
+        return new RemoteUsersData<>();
     }
 }
