@@ -2,6 +2,9 @@ package com.teamup.mihaylov.teamup.base.authentication;
 
 import android.content.Context;
 
+import com.teamup.mihaylov.teamup.base.data.RemoteUsersData;
+import com.teamup.mihaylov.teamup.base.models.User;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -12,7 +15,7 @@ import dagger.Provides;
 @Module
 public class AuthenticationModule {
     @Provides
-    AuthenticationProvider providesAuthentication(Context context) {
-        return new AuthenticationProvider(context);
+    AuthenticationProvider providesAuthentication(Context context, RemoteUsersData<User> usersData) {
+        return new AuthenticationProvider(context, usersData);
     }
 }

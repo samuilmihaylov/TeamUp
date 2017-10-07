@@ -15,8 +15,17 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.teamup.mihaylov.teamup.base.data.RemoteUsersData;
+import com.teamup.mihaylov.teamup.base.models.User;
 
 import javax.inject.Inject;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by samui on 3.10.2017 г..
@@ -24,6 +33,7 @@ import javax.inject.Inject;
 
 public class AuthenticationProvider implements FirebaseAuth.AuthStateListener, GoogleApiClient.OnConnectionFailedListener {
 
+    private final RemoteUsersData<User> mUsersData;
     private FirebaseUser mUser;
     private FirebaseAuth mAuth;
     private GoogleApiClient mGoogleApiClient;
@@ -32,8 +42,9 @@ public class AuthenticationProvider implements FirebaseAuth.AuthStateListener, G
     private Activity mActivity;
 
     @Inject
-    AuthenticationProvider(Context context) {
+    AuthenticationProvider(Context context, RemoteUsersData<User> usersData) {
         mContext = context;
+        mUsersData = usersData;
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -47,6 +58,26 @@ public class AuthenticationProvider implements FirebaseAuth.AuthStateListener, G
                 .build();
 
         mAuth.addAuthStateListener(this);
+    }
+
+    public Observable<Boolean> isAuthenticated() {
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(final ObservableEmitter<Boolean> emitter) throws Exception {
+                mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+                    @Override
+                    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                        if (firebaseAuth.getCurrentUser() != null) {
+                            mUser = firebaseAuth.getCurrentUser();
+                            emitter.onNext(true);
+                        } else {
+                            emitter.onNext(false);
+                        }
+                        emitter.onComplete();
+                    }
+                });
+            }
+        });
     }
 
     public FirebaseAuth getFirebaseInstance() {
@@ -69,43 +100,86 @@ public class AuthenticationProvider implements FirebaseAuth.AuthStateListener, G
         return mAuth.getCurrentUser().getDisplayName();
     }
 
-    public void updateUserProfile(String displayName) {
-        if (mUser != null) {
-            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                    .setDisplayName(displayName).build();
+    public Observable<Boolean> updateUserProfile(final String displayName) {
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(final ObservableEmitter<Boolean> emitter) throws Exception {
+                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest
+                        .Builder()
+                        .setDisplayName(displayName).build();
 
-            mUser.updateProfile(profileUpdates);
-        }
+                String uid = mUser.getUid();
+                mUsersData.setKey(uid);
+                mUsersData.add(new User(uid, displayName, null, null));
+
+                mUser.updateProfile(profileUpdates)
+                        .addOnCompleteListener(mActivity, new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                emitter.onNext(true);
+                            }
+                        });
+            }
+        });
     }
 
-    public void signUpWithEmail(String email, String password, final String displayName) {
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(mActivity, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(mContext, "createUserWithEmail:onComplete:" + task.isSuccessful(), Toast.LENGTH_SHORT).show();
-                            updateUserProfile(displayName);
-                        } else if (!task.isSuccessful()) {
-                            Toast.makeText(mContext, "Authentication failed." + task.getException(), Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+    public Observable<Boolean> signUpWithEmail(final String email, final String password, final String displayName) {
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(final ObservableEmitter<Boolean> emitter) throws Exception {
+                mAuth.createUserWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(mActivity, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(mContext, "createUserWithEmail:onComplete:" + task.isSuccessful(), Toast.LENGTH_SHORT).show();
+
+                                    updateUserProfile(displayName)
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe(new Consumer<Boolean>() {
+                                                @Override
+                                                public void accept(Boolean isSuccessful) throws Exception {
+                                                    if (isSuccessful) {
+                                                        emitter.onNext(true);
+                                                    }
+                                                }
+                                            }, new Consumer<Throwable>() {
+                                                @Override
+                                                public void accept(Throwable throwable) throws Exception {
+                                                    throwable.printStackTrace();
+                                                }
+                                            });
+
+                                } else if (!task.isSuccessful()) {
+                                    Toast.makeText(mContext, "Authentication failed." + task.getException(), Toast.LENGTH_LONG).show();
+                                    emitter.onNext(false);
+                                }
+                            }
+                        });
+            }
+        });
     }
 
-    public void signInWithEmail(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(mActivity, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-
-                        if (task.isSuccessful()) {
-                            Toast.makeText(mContext, "signInWithEmail:success", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(mContext, "signInWithEmail:failure", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+    public Observable<Boolean> signInWithEmail(final String email, final String password) {
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(final ObservableEmitter<Boolean> emitter) throws Exception {
+                mAuth.signInWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(mActivity, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(mContext, "signInWithEmail:success", Toast.LENGTH_SHORT).show();
+                                    emitter.onNext(true);
+                                } else {
+                                    Toast.makeText(mContext, "signInWithEmail:failure", Toast.LENGTH_SHORT).show();
+                                    emitter.onNext(false);
+                                }
+                            }
+                        });
+            }
+        });
     }
 
     public void changeEmail(String newEmail) {
