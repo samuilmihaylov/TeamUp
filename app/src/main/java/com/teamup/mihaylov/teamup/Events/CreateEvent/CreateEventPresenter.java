@@ -1,7 +1,5 @@
 package com.teamup.mihaylov.teamup.Events.CreateEvent;
 
-import android.util.Log;
-
 import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
 import com.teamup.mihaylov.teamup.base.data.RemoteEventsData;
 import com.teamup.mihaylov.teamup.base.data.RemoteUsersData;
@@ -11,11 +9,6 @@ import com.teamup.mihaylov.teamup.base.models.User;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
-
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by samui on 4.10.2017 г..
@@ -54,7 +47,7 @@ public class CreateEventPresenter implements CreateEventContracts.Presenter {
     }
 
     @Override
-    public void addEvent(final String eventName, final String eventDescription, final String date, final String time) {
+    public void addEvent(final String eventName, final String eventDescription, final String date, final String time, String mLocation, ArrayList<Double> mCoordinates) {
 
         final String eventId = mRemoteEventsData.getKey();
         ArrayList<String> participants = new ArrayList<>();
@@ -68,7 +61,9 @@ public class CreateEventPresenter implements CreateEventContracts.Presenter {
                 time,
                 mCurrentUserName,
                 mCurrentUserId,
-                participants);
+                participants,
+                mLocation,
+                mCoordinates);
 
         mRemoteEventsData.add(event);
         mRemoteUsersData.addCreatedEvent(mCurrentUserId, eventId, event);

@@ -1,6 +1,9 @@
 package com.teamup.mihaylov.teamup.Events.CreateEvent;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.util.Log;
 
 import com.teamup.mihaylov.teamup.DrawerNavMain.DrawerNavMainActivity;
 import com.teamup.mihaylov.teamup.R;
@@ -10,8 +13,6 @@ import javax.inject.Inject;
 public class CreateEventActivity extends DrawerNavMainActivity {
 
     private CreateEventView mCreateEventView;
-    private String mTime;
-    private String mDate;
 
     @Inject
     CreateEventContracts.Presenter mCreateEventPresenter;
@@ -30,6 +31,14 @@ public class CreateEventActivity extends DrawerNavMainActivity {
                 .beginTransaction()
                 .replace(R.id.content_container, mCreateEventView)
                 .commit();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
