@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -49,10 +50,7 @@ import com.teamup.mihaylov.teamup.SignIn.SignInActivity;
 import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -68,10 +66,9 @@ public class DrawerNavMainActivity extends DaggerAppCompatActivity {
 
     private Toolbar mToolbar;
     private Drawer mDrawer;
-    private File photoFile;
-    private String mCurrentPhotoPath;
+    private Uri mImageUri;
+    private AccountHeader mDrawerHeader;
     private DrawerBuilder mDrawerBuilder;
-    private AccountHeader mHeaderResult;
     private PrimaryDrawerItem mHomeDrawerItem;
     private PrimaryDrawerItem mSignInDrawerItem;
     private PrimaryDrawerItem mSignUpDrawerItem;
@@ -96,9 +93,9 @@ public class DrawerNavMainActivity extends DaggerAppCompatActivity {
     }
 
     protected void onStart() {
-        setupDrawerHeaderProfileImage();
         setupDrawerItems();
         setupDrawer();
+        setupDrawerHeaderProfileImage();
 
         super.onStart();
     }
@@ -135,40 +132,70 @@ public class DrawerNavMainActivity extends DaggerAppCompatActivity {
         });
     }
 
-    public void setupDrawerHeader(FirebaseUser user) {
-        ProfileDrawerItem userProfile = new ProfileDrawerItem();
+    private Uri getProfileImageUri() {
+        File path = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "TeamUp");
+
+        File imageFile = new File(path, "profile_image.jpg");
+
+        if (imageFile == null) {
+            return null;
+        }
+
+        Uri uri = FileProvider.getUriForFile(getApplicationContext(),
+                "com.TeamUpApplication.android.fileprovider", imageFile);
+
+        return uri;
+    }
+
+    public void setupDrawerHeader(final FirebaseUser user) {
+        final ProfileDrawerItem userProfile = new ProfileDrawerItem();
 
         if (user != null) {
             String userEmail = user.getEmail();
             String userName = user.getDisplayName();
+
             if (user.getPhotoUrl() != null) {
-                userProfile.withName(userEmail).withTextColor(Color.BLACK)
+                userProfile
+                        .withName(userEmail).withTextColor(Color.BLACK)
                         .withEmail(userName).withTextColor(Color.BLACK)
                         .withIcon(user.getPhotoUrl().toString());
+            } else if (getProfileImageUri() != null) {
+                userProfile
+                        .withName(userEmail).withTextColor(Color.BLACK)
+                        .withEmail(userName).withTextColor(Color.BLACK)
+                        .withIcon(getProfileImageUri().toString());
+            } else {
+                userProfile
+                        .withName(userEmail).withTextColor(Color.BLACK)
+                        .withEmail(userName).withTextColor(Color.BLACK);
             }
-
-            userProfile.withName(userEmail).withTextColor(Color.BLACK)
-                    .withEmail(userName).withTextColor(Color.BLACK);
-
         } else {
             userProfile
                     .withName("Not signed in").withTextColor(Color.BLACK)
                     .withEmail("Anonymous").withTextColor(Color.BLACK);
         }
 
-        mHeaderResult = new AccountHeaderBuilder()
+        mDrawerHeader = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.drawer_profile_background)
                 .addProfiles(userProfile)
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
                     public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
-                        if (mAuthProvider.getUser().getProviderId().equals("email")){
-                            if(checkAndRequestPermissions()){
-                                openCamera();
+                        for (UserInfo user : mAuthProvider.getFirebaseInstance().getCurrentUser().getProviderData()) {
+                            if (user.getProviderId().equals("password")) {
+                                if (checkAndRequestPermissions()) {
+                                    openCamera();
+                                }
                             }
                         }
-                            return false;
+
+                        if (mImageUri != null) {
+                            mDrawerHeader.updateProfile(userProfile.withIcon(mImageUri));
+                        }
+
+                        return false;
                     }
                 })
                 .build();
@@ -183,6 +210,10 @@ public class DrawerNavMainActivity extends DaggerAppCompatActivity {
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
         }
         if (!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),
@@ -222,10 +253,10 @@ public class DrawerNavMainActivity extends DaggerAppCompatActivity {
             File imageFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                     "TeamUp" + File.separator + imageFileName);
 
-            Uri imageUri = FileProvider.getUriForFile(getApplicationContext(), "com.TeamUpApplication.android.fileprovider", imageFile);
+            mImageUri = FileProvider.getUriForFile(getApplicationContext(), "com.TeamUpApplication.android.fileprovider", imageFile);
 
             takePictureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
             startActivityForResult(takePictureIntent, CAMERA_REQUEST);
 
             MediaScannerConnection.scanFile(this,
@@ -299,10 +330,10 @@ public class DrawerNavMainActivity extends DaggerAppCompatActivity {
 
         FirebaseUser user = mAuthProvider.getUser();
 
-        setupDrawerHeader(user);
-
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+
+        setupDrawerHeader(user);
 
         long selectedDrawerItem = getIntent().getLongExtra("SELECTED_DRAWER_ITEM", 1);
 
@@ -312,7 +343,7 @@ public class DrawerNavMainActivity extends DaggerAppCompatActivity {
                 .withToolbar(mToolbar)
                 .withActionBarDrawerToggle(true)
                 .withActionBarDrawerToggleAnimated(true)
-                .withAccountHeader(mHeaderResult)
+                .withAccountHeader(mDrawerHeader)
                 .withRootView(R.id.drawer_layout);
 
         if (user == null) {
