@@ -18,6 +18,8 @@ public class Event implements Parcelable {
     private String authorName;
     private String authorId;
     private ArrayList<String> participants;
+    private String location;
+    private ArrayList<Double> coordinates;
 
     public Event(){
 
@@ -32,6 +34,8 @@ public class Event implements Parcelable {
         authorName = in.readString();
         authorId = in.readString();
         participants = (ArrayList<String>) in.readSerializable();
+        location = in.readString();
+        coordinates = (ArrayList<Double>) in.readSerializable();
     }
 
     @Override
@@ -44,6 +48,8 @@ public class Event implements Parcelable {
         out.writeString(authorName);
         out.writeString(authorId);
         out.writeSerializable(participants);
+        out.writeString(location);
+        out.writeSerializable(coordinates);
     }
 
     public static final Parcelable.Creator<Event> CREATOR = new Parcelable.Creator<Event>(){
@@ -63,7 +69,9 @@ public class Event implements Parcelable {
             String time,
             String authorName,
             String authorId,
-            ArrayList<String> participants) {
+            ArrayList<String> participants,
+            String location,
+            ArrayList<Double> coordinates) {
         setId(id);
         setName(name);
         setDescription(description);
@@ -72,6 +80,8 @@ public class Event implements Parcelable {
         setAuthorName(authorName);
         setAuthorId(authorId);
         setParticipants(participants);
+        setLocation(location);
+        setCoordintes(coordinates);
     }
 
     public String getId() {
@@ -153,5 +163,25 @@ public class Event implements Parcelable {
     @Override
     public int describeContents() {
         return 0;
+    }
+
+    public String getLocation(){
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public ArrayList<Double> getCoordinates(){
+        if(this.coordinates == null){
+            this.coordinates = new ArrayList<>();
+        }
+
+        return this.coordinates;
+    }
+
+    public void setCoordintes(ArrayList<Double> coordinates) {
+        this.coordinates = coordinates;
     }
 }
