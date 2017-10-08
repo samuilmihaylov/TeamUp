@@ -17,17 +17,18 @@ import java.util.ArrayList;
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHolder> {
 
-    private static final int NUMBERS_OF_ITEM_TO_DISPLAY = 2;
     private ArrayList<Event> mEventsList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView eventName;
         public TextView eventDescription;
+        public TextView eventLocation;
 
         public MyViewHolder(View view) {
             super(view);
             eventName = (TextView) view.findViewById(R.id.event_name);
             eventDescription = (TextView) view.findViewById(R.id.event_description);
+            eventLocation = (TextView) view.findViewById(R.id.event_location);
         }
     }
 
@@ -48,6 +49,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
 
         holder.eventName.setText("Name: " + event.getName());
         holder.eventDescription.setText("Description: " + event.getDescription());
+        holder.eventLocation.setText("Location: " + event.getLocation());
     }
 
     @Override
