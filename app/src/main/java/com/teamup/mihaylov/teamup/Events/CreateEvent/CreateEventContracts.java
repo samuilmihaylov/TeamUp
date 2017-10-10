@@ -15,6 +15,6 @@ public interface CreateEventContracts {
     }
 
     interface Presenter extends BaseContracts.Presenter<View> {
-        void addEvent(String eventName, String eventDescription, String date, String time, String mLocation, ArrayList<Double> mCoordinates);
+        void addEvent(String eventName, String eventDescription, String sport, Integer playersCount, String date, String time, String mLocation, ArrayList<Double> mCoordinates);
     }
 }

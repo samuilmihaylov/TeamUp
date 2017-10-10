@@ -4,6 +4,8 @@ import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
 import com.teamup.mihaylov.teamup.base.data.RemoteUsersData;
 import com.teamup.mihaylov.teamup.base.models.User;
 
+import javax.inject.Named;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -14,7 +16,8 @@ import dagger.Provides;
 @Module()
 public class ListJoinedEventsModule {
     @Provides
-    ListJoinedEventsContracts.Presenter provideListJoinedEventsPresenter(AuthenticationProvider authProvider, RemoteUsersData<User> data) {
+    ListJoinedEventsContracts.Presenter provideListJoinedEventsPresenter(
+            AuthenticationProvider authProvider, RemoteUsersData<User> data) {
         return new ListJoinedEventsPresenter(authProvider, data);
     }
 }

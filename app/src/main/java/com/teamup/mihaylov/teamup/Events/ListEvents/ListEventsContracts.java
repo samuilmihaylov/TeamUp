@@ -4,6 +4,7 @@ import com.teamup.mihaylov.teamup.base.contracts.BaseContracts;
 import com.teamup.mihaylov.teamup.base.models.Event;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.Observable;
 
@@ -14,10 +15,12 @@ import io.reactivex.Observable;
 public interface ListEventsContracts {
     interface View extends BaseContracts.View<Presenter> {
 
-        void setEvents(ArrayList<Event> events);
+        void setEvents(List<Event> events);
     }
 
     interface Presenter extends BaseContracts.Presenter<View> {
         void load();
+
+        Boolean isAuthenticated();
     }
 }

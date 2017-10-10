@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <external-path name="my_images" path="Pictures/TeamUp" />
+    <!--<external-path name="my_images" path="Pictures/TeamUp" />-->
+    <external-path name="my_images" path="Android/data/com.teamup.mihaylov.teamup/files/Pictures" />
 </paths>

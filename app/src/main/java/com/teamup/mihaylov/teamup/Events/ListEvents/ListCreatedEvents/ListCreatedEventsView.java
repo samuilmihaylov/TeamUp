@@ -18,6 +18,7 @@ import com.teamup.mihaylov.teamup.R;
 import com.teamup.mihaylov.teamup.base.models.Event;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by samui on 6.10.2017 г..
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 
 public class ListCreatedEventsView extends Fragment implements ListCreatedEventsContracts.View {
 
-    private ArrayList<Event> mEventsList;
+    private List<Event> mEventsList;
     private RecyclerView mRecyclerView;
     private EventsAdapter mAdapter;
     private ListCreatedEventsContracts.Presenter mPresenter;
@@ -47,6 +48,7 @@ public class ListCreatedEventsView extends Fragment implements ListCreatedEvents
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_list_created_events, container, false);
+
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.events_list);
         mRecyclerView.setHasFixedSize(true);
@@ -103,7 +105,7 @@ public class ListCreatedEventsView extends Fragment implements ListCreatedEvents
     }
 
     @Override
-    public void setEvents(ArrayList<Event> events) {
+    public void setEvents(List<Event> events) {
         mEventsList.clear();
         mEventsList.addAll(events);
         mAdapter.notifyDataSetChanged();

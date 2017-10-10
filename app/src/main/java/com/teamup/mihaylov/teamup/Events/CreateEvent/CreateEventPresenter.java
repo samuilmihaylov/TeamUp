@@ -25,9 +25,9 @@ public class CreateEventPresenter implements CreateEventContracts.Presenter {
     private CreateEventContracts.View mView;
 
     @Inject
-    public CreateEventPresenter(AuthenticationProvider authProvider,
-                                RemoteEventsData<Event> remoteEventsData,
-                                RemoteUsersData<User> remoteUsersData) {
+    public CreateEventPresenter(final AuthenticationProvider authProvider,
+                                final RemoteEventsData<Event> remoteEventsData,
+                                final RemoteUsersData<User> remoteUsersData) {
         mAuthProvider = authProvider;
         mRemoteEventsData = remoteEventsData;
         mRemoteUsersData = remoteUsersData;
@@ -37,7 +37,7 @@ public class CreateEventPresenter implements CreateEventContracts.Presenter {
     }
 
     @Override
-    public void subscribe(CreateEventContracts.View view) {
+    public void subscribe(final CreateEventContracts.View view) {
         mView = view;
     }
 
@@ -47,7 +47,14 @@ public class CreateEventPresenter implements CreateEventContracts.Presenter {
     }
 
     @Override
-    public void addEvent(final String eventName, final String eventDescription, final String date, final String time, String mLocation, ArrayList<Double> mCoordinates) {
+    public void addEvent(final String eventName,
+                         final String eventDescription,
+                         final String sport,
+                         final Integer playersCount,
+                         final String date,
+                         final String time,
+                         final String mLocation,
+                         final ArrayList<Double> mCoordinates) {
 
         final String eventId = mRemoteEventsData.getKey();
         ArrayList<String> participants = new ArrayList<>();
@@ -57,6 +64,8 @@ public class CreateEventPresenter implements CreateEventContracts.Presenter {
                 eventId,
                 eventName,
                 eventDescription,
+                sport,
+                playersCount,
                 date,
                 time,
                 mCurrentUserName,

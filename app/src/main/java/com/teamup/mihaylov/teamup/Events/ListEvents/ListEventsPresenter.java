@@ -1,9 +1,12 @@
 package com.teamup.mihaylov.teamup.Events.ListEvents;
 
+import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
 import com.teamup.mihaylov.teamup.base.data.RemoteEventsData;
 import com.teamup.mihaylov.teamup.base.models.Event;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -19,23 +22,26 @@ import io.reactivex.schedulers.Schedulers;
 public class ListEventsPresenter implements ListEventsContracts.Presenter {
 
     private final RemoteEventsData<Event> mRemoteData;
+    private final AuthenticationProvider mAuth;
     private ListEventsContracts.View mView;
 
     @Inject
-    ListEventsPresenter(RemoteEventsData<Event> data) {
+    ListEventsPresenter(AuthenticationProvider authProvider,
+                        RemoteEventsData<Event> data) {
         mRemoteData = data;
+        mAuth = authProvider;
     }
 
     @Override
     public void load() {
-        Observable<ArrayList<Event>> observable = mRemoteData.getAll();
+        Observable<List<Event>> observable = mRemoteData.getAll();
 
         observable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<ArrayList<Event>>() {
+                .subscribe(new Consumer<List<Event>>() {
                     @Override
-                    public void accept(ArrayList<Event> events) throws Exception {
+                    public void accept(List<Event> events) throws Exception {
                         mView.setEvents(events);
                     }
                 }, new Consumer<Throwable>() {
@@ -44,6 +50,14 @@ public class ListEventsPresenter implements ListEventsContracts.Presenter {
                         throwable.printStackTrace();
                     }
                 });
+    }
+
+    public Boolean isAuthenticated(){
+        if(mAuth.getUser() != null){
+            return true;
+        }
+
+        return false;
     }
 
     @Override

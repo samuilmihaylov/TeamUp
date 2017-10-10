@@ -9,6 +9,7 @@ import com.teamup.mihaylov.teamup.TeamUpApplication;
 import com.teamup.mihaylov.teamup.base.models.Event;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -34,10 +35,10 @@ public class RemoteEventsData<T> implements BaseData<T>, ValueEventListener{
     }
 
     @Override
-    public Observable<ArrayList<T>> getAll() {
-        return Observable.create(new ObservableOnSubscribe<ArrayList<T>>() {
+    public Observable<List<T>> getAll() {
+        return Observable.create(new ObservableOnSubscribe<List<T>>() {
             @Override
-            public void subscribe(final ObservableEmitter<ArrayList<T>> emitter) throws Exception {
+            public void subscribe(final ObservableEmitter<List<T>> emitter) throws Exception {
                 mDatabase.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -76,7 +77,6 @@ public class RemoteEventsData<T> implements BaseData<T>, ValueEventListener{
     public Observable remove(Object item) {
         return null;
     }
-
 
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {

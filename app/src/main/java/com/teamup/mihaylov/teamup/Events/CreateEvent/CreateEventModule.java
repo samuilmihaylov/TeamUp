@@ -19,9 +19,7 @@ import dagger.Provides;
 public class CreateEventModule {
     @Provides
     CreateEventContracts.Presenter provideCreateEventPresenter(
-            AuthenticationProvider authProvider,
-            RemoteEventsData<Event> eventsData,
-            RemoteUsersData<User> usersData){
+            AuthenticationProvider authProvider, RemoteEventsData<Event> eventsData, RemoteUsersData<User> usersData){
         return new CreateEventPresenter(authProvider, eventsData, usersData);
     }
 }

@@ -57,7 +57,7 @@ public class EventDetailsPresenter implements EventDetailsContracts.Presenter {
 
     @Override
     public Boolean isParticipating(){
-        return true;
+        return this.mEvent.getParticipants().contains(mAuthProvider.getUser().getUid());
     }
 
     @Override
@@ -67,11 +67,18 @@ public class EventDetailsPresenter implements EventDetailsContracts.Presenter {
 
     @Override
     public void joinEvent(){
-        String userId = mAuthProvider.getUser().getUid();
-        this.mEvent.addParticipant(userId);
-        mEventsData.setKey(mEventId);
-        mEventsData.add(mEvent);
-        mUsersData.addJoinedEvent(userId, mEventId, mEvent);
+        if(this.mEvent.getParticipants().size() < mEvent.getPlayersCount()){
+            String userId = mAuthProvider.getUser().getUid();
+            this.mEvent.addParticipant(userId);
+            mEventsData.setKey(mEventId);
+            mEventsData.add(mEvent);
+            mUsersData.addJoinedEvent(userId, mEventId, mEvent);
+            mView.updateUI();
+            mView.notifyJoinLobby();
+        }
+        else{
+            mView.notifyForFullLobby();
+        }
     }
 
     @Override
@@ -81,5 +88,7 @@ public class EventDetailsPresenter implements EventDetailsContracts.Presenter {
         mEventsData.setKey(mEventId);
         mEventsData.add(mEvent);
         mUsersData.removeJoinedEvent(userId, mEventId);
+        mView.updateUI();
+        mView.notifyLeaveLobby();
     }
 }

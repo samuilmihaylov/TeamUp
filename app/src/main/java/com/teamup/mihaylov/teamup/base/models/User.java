@@ -3,7 +3,15 @@ package com.teamup.mihaylov.teamup.base.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Property;
+import org.greenrobot.greendao.annotation.ToMany;
+
 import java.util.ArrayList;
+import java.util.List;
+import org.greenrobot.greendao.DaoException;
 
 /**
  * Created by samui on 6.10.2017 г..
@@ -11,12 +19,20 @@ import java.util.ArrayList;
 
 public class User implements Parcelable {
     private String id;
+
     private String name;
-    private ArrayList<Event> joinedEvents;
-    private ArrayList<Event> createdEvents;
+
+    private List<Event> joinedEvents;
+
+    private List<Event> createdEvents;
 
     public User() {
 
+    }
+
+    public User(String id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
     public User(Parcel in) {
@@ -24,8 +40,6 @@ public class User implements Parcelable {
         name = in.readString();
         in.readTypedList(joinedEvents, Event.CREATOR);
         in.readTypedList(createdEvents, Event.CREATOR);
-//        joinedEvents = (ArrayList<Event>) in.readSerializable();
-//        createdEvents = (ArrayList<Event>) in.readSerializable();
     }
 
     @Override
@@ -48,17 +62,6 @@ public class User implements Parcelable {
         }
     };
 
-    public User(
-            String id,
-            String name,
-            ArrayList<Event> joinedEvents,
-            ArrayList<Event> createdEvents) {
-        setId(id);
-        setName(name);
-        setJoined(joinedEvents);
-        setCreated(createdEvents);
-    }
-
     public String getId() {
         return this.id;
     }
@@ -75,25 +78,25 @@ public class User implements Parcelable {
         return name;
     }
 
-    public ArrayList<Event> getJoined() {
+    public List<Event> getJoined() {
         if (joinedEvents == null) {
-            joinedEvents = new ArrayList<Event>();
+            joinedEvents = new ArrayList<>();
         }
         return this.joinedEvents;
     }
 
-    public void setJoined(ArrayList<Event> joinedEvents) {
+    public void setJoined(List<Event> joinedEvents) {
         this.joinedEvents = joinedEvents;
     }
 
-    public ArrayList<Event> getCreated() {
+    public List<Event> getCreated() {
         if (createdEvents == null) {
             createdEvents = new ArrayList<Event>();
         }
         return this.createdEvents;
     }
 
-    public void setCreated(ArrayList<Event> createdEvents) {
+    public void setCreated(List<Event> createdEvents) {
         this.createdEvents = createdEvents;
     }
 

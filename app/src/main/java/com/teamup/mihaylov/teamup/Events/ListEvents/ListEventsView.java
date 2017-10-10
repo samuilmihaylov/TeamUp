@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,19 +17,25 @@ import com.teamup.mihaylov.teamup.Events.EventDetails.EventDetailsActivity;
 import com.teamup.mihaylov.teamup.Events.ListEvents.base.EventsAdapter;
 import com.teamup.mihaylov.teamup.Events.ListEvents.base.RecyclerItemListener;
 import com.teamup.mihaylov.teamup.R;
+import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
 import com.teamup.mihaylov.teamup.base.models.Event;
+import com.teamup.mihaylov.teamup.base.utils.ui.LoadingIndicator;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ListEventsView extends Fragment implements ListEventsContracts.View {
+public class ListEventsView extends Fragment implements ListEventsContracts.View, LoadingIndicator.LoadingView {
 
-    private ArrayList<Event> mEventsList;
+    private List<Event> mEventsList;
     private RecyclerView mRecyclerView;
     private EventsAdapter mAdapter;
     private ListEventsContracts.Presenter mPresenter;
+    private View mLoadingView;
 
     public ListEventsView() {
         // Required empty public constructor
@@ -49,6 +56,10 @@ public class ListEventsView extends Fragment implements ListEventsContracts.View
         View view = inflater.inflate(R.layout.fragment_list_events, container, false);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.events_list);
+        mLoadingView = view.findViewById(R.id.loading_container);
+
+        showLoading();
+
         mRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager =
                 new LinearLayoutManager(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL, false);
@@ -61,24 +72,33 @@ public class ListEventsView extends Fragment implements ListEventsContracts.View
 
         mRecyclerView.setAdapter(mAdapter);
 
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemListener(getActivity().getApplicationContext(), mRecyclerView,
-                new RecyclerItemListener.RecyclerTouchListener() {
-                    public void onClickItem(View v, int position) {
-                        Toast.makeText(getActivity().getApplicationContext(), mEventsList.get(position).getName(), Toast.LENGTH_SHORT).show();
+        mRecyclerView
+                .addOnItemTouchListener(new RecyclerItemListener(getActivity().getApplicationContext(), mRecyclerView,
+                        new RecyclerItemListener.RecyclerTouchListener() {
+                            public void onClickItem(View v, int position) {
+                                if (mPresenter.isAuthenticated()) {
+                                    Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+                                    intent.putExtra("event_details", mEventsList.get(position));
 
-                        Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
-                        intent.putExtra("event_details", mEventsList.get(position));
-                        startActivity(intent);
-                    }
+                                    startActivity(intent);
+                                } else {
+                                    Toast.makeText(getActivity().getApplicationContext(),
+                                            "You have to be signed in to open the event", Toast.LENGTH_SHORT).show();
+                                }
+                            }
 
-                    public void onLongClickItem(View v, int position) {
-                        Toast.makeText(getActivity().getApplicationContext(), mEventsList.get(position).getName(), Toast.LENGTH_SHORT).show();
+                            public void onLongClickItem(View v, int position) {
+                                if (mPresenter.isAuthenticated()) {
+                                    Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+                                    intent.putExtra("event_details", mEventsList.get(position));
 
-                        Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
-                        intent.putExtra("event_details", mEventsList.get(position));
-                        startActivity(intent);
-                    }
-                }));
+                                    startActivity(intent);
+                                } else {
+                                    Toast.makeText(getActivity().getApplicationContext(),
+                                            "You have to be signed in to open the event", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }));
 
         return view;
     }
@@ -103,9 +123,30 @@ public class ListEventsView extends Fragment implements ListEventsContracts.View
     }
 
     @Override
-    public void setEvents(ArrayList<Event> events) {
+    public void setEvents(List<Event> events) {
         mEventsList.clear();
         mEventsList.addAll(events);
         mAdapter.notifyDataSetChanged();
+        hideLoading();
+    }
+
+    @Override
+    public View getContentContainer() {
+        return mRecyclerView;
+    }
+
+    @Override
+    public ViewGroup getLoadingContainer() {
+        return (ViewGroup) mLoadingView;
+    }
+
+    @Override
+    public void showLoading() {
+        LoadingIndicator.showLoadingIndicator(ListEventsView.this);
+    }
+
+    @Override
+    public void hideLoading() {
+        LoadingIndicator.hideLoadingIndicator(ListEventsView.this);
     }
 }

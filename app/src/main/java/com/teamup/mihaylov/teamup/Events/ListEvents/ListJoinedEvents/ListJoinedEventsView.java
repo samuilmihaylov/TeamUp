@@ -18,6 +18,7 @@ import com.teamup.mihaylov.teamup.R;
 import com.teamup.mihaylov.teamup.base.models.Event;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by samui on 6.10.2017 г..
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 
 public class ListJoinedEventsView extends Fragment implements ListJoinedEventsContracts.View {
 
-    private ArrayList<Event> mEventsList;
+    private List<Event> mEventsList;
     private RecyclerView mRecyclerView;
     private EventsAdapter mAdapter;
     private ListJoinedEventsContracts.Presenter mPresenter;
@@ -103,7 +104,7 @@ public class ListJoinedEventsView extends Fragment implements ListJoinedEventsCo
     }
 
     @Override
-    public void setEvents(ArrayList<Event> events) {
+    public void setEvents(List<Event> events) {
         mEventsList.clear();
         mEventsList.addAll(events);
         mAdapter.notifyDataSetChanged();

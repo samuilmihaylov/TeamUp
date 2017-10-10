@@ -10,6 +10,7 @@ import com.teamup.mihaylov.teamup.R;
 import com.teamup.mihaylov.teamup.base.models.Event;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by samui on 29.9.2017 г..
@@ -17,22 +18,28 @@ import java.util.ArrayList;
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHolder> {
 
-    private ArrayList<Event> mEventsList;
+    private List<Event> mEventsList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView eventName;
-        public TextView eventDescription;
-        public TextView eventLocation;
+        private final TextView eventDate;
+        private final TextView eventTime;
+        private final TextView eventSport;
+        private final TextView eventName;
+        private final TextView eventLocation;
+        private final TextView eventPeople;
 
         public MyViewHolder(View view) {
             super(view);
             eventName = (TextView) view.findViewById(R.id.event_name);
-            eventDescription = (TextView) view.findViewById(R.id.event_description);
+            eventSport =  (TextView) view.findViewById(R.id.event_sport);
+            eventDate =  (TextView) view.findViewById(R.id.event_date);
+            eventTime = (TextView) view.findViewById(R.id.event_time);
+            eventPeople = (TextView) view.findViewById(R.id.event_people);
             eventLocation = (TextView) view.findViewById(R.id.event_location);
         }
     }
 
-    public EventsAdapter(ArrayList<Event> events) {
+    public EventsAdapter(List<Event> events) {
         this.mEventsList = events;
     }
 
@@ -47,9 +54,12 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
     public void onBindViewHolder(EventsAdapter.MyViewHolder holder, int position) {
         Event event = mEventsList.get(position);
 
-        holder.eventName.setText("Name: " + event.getName());
-        holder.eventDescription.setText("Description: " + event.getDescription());
-        holder.eventLocation.setText("Location: " + event.getLocation());
+        holder.eventName.setText(event.getName());
+        holder.eventSport.setText(event.getSport());
+        holder.eventDate.setText(event.getDate());
+        holder.eventTime.setText(event.getTime());
+        holder.eventLocation.setText(event.getLocation());
+        holder.eventPeople.setText(event.getParticipants().size() + " / " + event.getPlayersCount());
     }
 
     @Override

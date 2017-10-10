@@ -81,7 +81,6 @@ public class SignInActivity extends DrawerNavMainActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-
                             Intent intent = new Intent(getApplicationContext(), DrawerNavMainActivity.class);
                             startActivity(intent);
                         } else {
@@ -102,5 +101,11 @@ public class SignInActivity extends DrawerNavMainActivity {
     protected void onStop() {
         super.onStop();
         mGoogleApiClient.disconnect();
+        mView.hideLoading();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 }

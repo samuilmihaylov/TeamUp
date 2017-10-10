@@ -15,12 +15,18 @@ import com.teamup.mihaylov.teamup.DrawerNavMain.DrawerNavMainActivity;
 import com.teamup.mihaylov.teamup.R;
 import com.teamup.mihaylov.teamup.SignIn.SignInActivity;
 import com.teamup.mihaylov.teamup.UserProfile.UserProfileActivity;
+import com.teamup.mihaylov.teamup.base.utils.Constants;
+import com.teamup.mihaylov.teamup.base.utils.Validator;
+import com.teamup.mihaylov.teamup.base.utils.ui.LoadingIndicator;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class SignUpView extends Fragment implements SignUpContracts.View {
+public class SignUpView extends Fragment implements SignUpContracts.View, LoadingIndicator.LoadingView {
 
     private Button mBtnSignIn;
     private Button mBtnSignUp;
@@ -50,14 +56,21 @@ public class SignUpView extends Fragment implements SignUpContracts.View {
             String lastName = mInputLastName.getText().toString().trim();
             String displayName = firstName + " " + lastName;
 
-            if (TextUtils.isEmpty(email)) {
+            if (TextUtils.isEmpty(firstName)) {
+                mInputFirstName.setError("First name is required!");
+            } else if (TextUtils.isEmpty(lastName)) {
+                mInputLastName.setError("Last name is required!");
+            } else if (TextUtils.isEmpty(email)) {
                 mInputEmail.setError("Enter email address!");
+            } else if (!Validator.isValidEmail(email)) {
+                mInputEmail.setError("Enter valid email address!");
             } else if (TextUtils.isEmpty(password)) {
                 mInputPassword.setError("Enter password!");
             } else if (password.length() < 6) {
                 mInputPassword.setError("Password too short, enter minimum 6 characters!");
             } else {
-                mProgressBar.setVisibility(View.VISIBLE);
+
+                showLoading();
 
                 mPresenter
                         .signUpWithEmail(email, password, displayName)
@@ -66,11 +79,10 @@ public class SignUpView extends Fragment implements SignUpContracts.View {
                         .subscribe(new Consumer<Boolean>() {
                             @Override
                             public void accept(Boolean isSuccessful) throws Exception {
-                                if(isSuccessful){
+                                if (isSuccessful) {
                                     Intent intent = new Intent(getActivity(), DrawerNavMainActivity.class);
                                     startActivity(intent);
-                                }
-                                else{
+                                } else {
                                     Intent intent = new Intent(getActivity(), SignUpActivity.class);
                                     startActivity(intent);
                                 }
@@ -83,6 +95,7 @@ public class SignUpView extends Fragment implements SignUpContracts.View {
                         });
             }
         }
+
     };
 
     private Button.OnClickListener mBtnResetPasswordListener = new Button.OnClickListener() {
@@ -138,6 +151,7 @@ public class SignUpView extends Fragment implements SignUpContracts.View {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        hideLoading();
         mPresenter.unsubscribe();
         mPresenter = null;
     }
@@ -145,5 +159,25 @@ public class SignUpView extends Fragment implements SignUpContracts.View {
     @Override
     public void setPresenter(SignUpContracts.Presenter presenter) {
         mPresenter = presenter;
+    }
+
+    @Override
+    public View getContentContainer() {
+        return getView().findViewById(R.id.content_container);
+    }
+
+    @Override
+    public ViewGroup getLoadingContainer() {
+        return getView().findViewById(R.id.loading_container);
+    }
+
+    @Override
+    public void showLoading() {
+        LoadingIndicator.showLoadingIndicator(SignUpView.this);
+    }
+
+    @Override
+    public void hideLoading() {
+        LoadingIndicator.hideLoadingIndicator(SignUpView.this);
     }
 }

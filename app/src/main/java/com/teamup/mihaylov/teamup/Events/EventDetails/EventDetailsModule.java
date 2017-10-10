@@ -6,6 +6,8 @@ import com.teamup.mihaylov.teamup.base.data.RemoteUsersData;
 import com.teamup.mihaylov.teamup.base.models.Event;
 import com.teamup.mihaylov.teamup.base.models.User;
 
+import javax.inject.Named;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -15,8 +17,12 @@ import dagger.Provides;
 
 @Module()
 public class EventDetailsModule {
+
     @Provides
-    EventDetailsContracts.Presenter provideEventDetailsPresenter(AuthenticationProvider authProvider, RemoteEventsData<Event> eventsData, RemoteUsersData<User> usersData) {
+    EventDetailsContracts.Presenter provideEventDetailsPresenter(
+            AuthenticationProvider authProvider,
+            RemoteEventsData<Event> eventsData,
+            RemoteUsersData<User> usersData) {
         return new EventDetailsPresenter(authProvider, eventsData, usersData);
     }
 }

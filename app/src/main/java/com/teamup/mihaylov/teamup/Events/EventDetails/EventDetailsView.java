@@ -15,13 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.GeoDataClient;
-import com.google.android.gms.location.places.PlaceDetectionClient;
-import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -50,6 +48,11 @@ public class EventDetailsView extends Fragment implements EventDetailsContracts.
     private EventDetailsContracts.Presenter mPresenter;
 
     private GoogleMap mGoogleMap;
+    private Location mLastKnownLocation;
+    private FusedLocationProviderClient mFusedLocationProviderClient;
+    private MapView mapView;
+    private Marker mCurrLocationMarker;
+    private Event mEvent;
 
     private TextView mEventName;
     private TextView mEventDescription;
@@ -82,12 +85,14 @@ public class EventDetailsView extends Fragment implements EventDetailsContracts.
             mBtnLeaveEvent.setVisibility(View.GONE);
         }
     };
+    private View mView;
+    private TextView mEventLocation;
+    private TextView mEventSport;
+    private TextView mEventDate;
+    private TextView mEventTime;
+    private TextView mEventPeople;
+    private TextView mEventAuthor;
 
-    private Location mLastKnownLocation;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
-    private MapView mapView;
-    private Marker mCurrLocationMarker;
-    private Event mEvent;
 
     public EventDetailsView() {
         // Required empty public constructor
@@ -99,21 +104,32 @@ public class EventDetailsView extends Fragment implements EventDetailsContracts.
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_event_details, container, false);
-
+        mView = inflater.inflate(R.layout.fragment_event_details, container, false);
         mEvent = mPresenter.getEvent();
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
-        mEventName = (TextView) view.findViewById(R.id.event_name);
-        mEventDescription = (TextView) view.findViewById(R.id.event_description);
+        mEventAuthor = (TextView) mView.findViewById(R.id.event_author);
+        mEventName = (TextView) mView.findViewById(R.id.event_name);
+        mEventDescription = (TextView) mView.findViewById(R.id.event_description);
+        mEventSport = (TextView) mView.findViewById(R.id.event_sport);
+        mEventDate = (TextView) mView.findViewById(R.id.event_date);
+        mEventTime = (TextView) mView.findViewById(R.id.event_time);
+        mEventPeople = (TextView) mView.findViewById(R.id.event_people);
+        mEventLocation = (TextView) mView.findViewById(R.id.event_location);
 
-        mEventName.setText("Name: " + mEvent.getName());
-        mEventDescription.setText("Description: " + mEvent.getDescription());
+        mEventAuthor.setText(mEvent.getAuthorName());
+        mEventName.setText(mEvent.getName());
+        mEventDescription.setText(mEvent.getDescription());
+        mEventSport.setText(mEvent.getSport());
+        mEventDate.setText(mEvent.getDate());
+        mEventTime.setText(mEvent.getTime());
+        mEventPeople.setText(mEvent.getParticipants().size() + " / " + mEvent.getPlayersCount());
+        mEventLocation.setText(mEvent.getLocation());
 
-        mBtnJoinEvent = (Button) view.findViewById(R.id.btn_join_event);
-        mBtnEditEvent = (Button) view.findViewById(R.id.btn_edit_event);
-        mBtnLeaveEvent = (Button) view.findViewById(R.id.btn_leave_event);
+        mBtnJoinEvent = (Button) mView.findViewById(R.id.btn_join_event);
+        mBtnEditEvent = (Button) mView.findViewById(R.id.btn_edit_event);
+        mBtnLeaveEvent = (Button) mView.findViewById(R.id.btn_leave_event);
 
         mBtnJoinEvent.setOnClickListener(mBtnJoinEventListener);
         mBtnEditEvent.setOnClickListener(mBtnEditEventListener);
@@ -123,15 +139,34 @@ public class EventDetailsView extends Fragment implements EventDetailsContracts.
         mBtnLeaveEvent.setVisibility(View.GONE);
         mBtnEditEvent.setVisibility(View.GONE);
 
-        if (mPresenter.isAuthor()) {
+        if (mPresenter.isAuthor() && mPresenter.isParticipating()) {
             mBtnEditEvent.setVisibility(View.VISIBLE);
-        } else if (mPresenter.isParticipating()) {
-            mBtnLeaveEvent.setVisibility(View.VISIBLE);
-        } else {
+        } else if(!mPresenter.isAuthor() && !mPresenter.isParticipating()) {
             mBtnJoinEvent.setVisibility(View.VISIBLE);
+        } else if(!mPresenter.isAuthor() && mPresenter.isParticipating()) {
+            mBtnLeaveEvent.setVisibility(View.VISIBLE);
         }
 
-        return view;
+        return mView;
+    }
+
+    public void updateUI(){
+        mEventPeople.setText(mEvent.getParticipants().size() + " / " + mEvent.getPlayersCount());
+    }
+
+    @Override
+    public void notifyForFullLobby() {
+        Toast.makeText(getContext(),"Sorry, you can't join. Lobby is full.", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void notifyLeaveLobby() {
+        Toast.makeText(getContext(),"You have left the lobby.", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void notifyJoinLobby() {
+        Toast.makeText(getContext(),"You have joined the lobby.", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -172,7 +207,7 @@ public class EventDetailsView extends Fragment implements EventDetailsContracts.
             case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        updateLocationUI();
+                    updateLocationUI();
                 }
             }
         }
@@ -250,8 +285,7 @@ public class EventDetailsView extends Fragment implements EventDetailsContracts.
         }
     }
 
-    public void getMarkerLocation()
-    {
+    public void getMarkerLocation() {
         if (mCurrLocationMarker != null) {
             mCurrLocationMarker.remove();
         }

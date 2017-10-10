@@ -3,6 +3,7 @@ package com.teamup.mihaylov.teamup.base.data;
 import com.teamup.mihaylov.teamup.base.models.Event;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.Observable;
 
@@ -12,7 +13,7 @@ import io.reactivex.Observable;
 
 public interface BaseData<T> {
 
-    Observable<ArrayList<T>> getAll();
+    Observable<List<T>> getAll();
 
     void add(T item);
 

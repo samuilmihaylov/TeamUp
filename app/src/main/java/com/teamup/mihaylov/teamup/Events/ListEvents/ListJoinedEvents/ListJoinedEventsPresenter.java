@@ -8,6 +8,7 @@ import com.teamup.mihaylov.teamup.base.models.Event;
 import com.teamup.mihaylov.teamup.base.models.User;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -33,14 +34,14 @@ public class ListJoinedEventsPresenter implements ListJoinedEventsContracts.Pres
 
     @Override
     public void load() {
-        Observable<ArrayList<Event>> observable = mUsersData.getJoinedEvents(mAuth.getUserId());
+        Observable<List<Event>> observable = mUsersData.getJoinedEvents(mAuth.getUserId());
 
         observable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<ArrayList<Event>>() {
+                .subscribe(new Consumer<List<Event>>() {
                     @Override
-                    public void accept(ArrayList<Event> events) throws Exception {
+                    public void accept(List<Event> events) throws Exception {
                         mView.setEvents(events);
                     }
                 }, new Consumer<Throwable>() {

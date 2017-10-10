@@ -10,6 +10,13 @@ import com.teamup.mihaylov.teamup.base.models.Event;
 public class EventDetailsContracts extends BaseContracts {
     interface View extends BaseContracts.View<Presenter> {
 
+        void updateUI();
+
+        void notifyForFullLobby();
+
+        void notifyLeaveLobby();
+
+        void notifyJoinLobby();
     }
 
     interface Presenter extends BaseContracts.Presenter<View> {

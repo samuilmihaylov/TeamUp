@@ -3,7 +3,14 @@ package com.teamup.mihaylov.teamup.base.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.greenrobot.greendao.annotation.Convert;
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.converter.PropertyConverter;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by samui on 29.9.2017 г..
@@ -11,24 +18,90 @@ import java.util.ArrayList;
 
 public class Event implements Parcelable {
     private String id;
+
     private String name;
     private String description;
+    private String sport;
+    private Integer playersCount;
     private String date;
     private String time;
     private String authorName;
     private String authorId;
+
+//    @Convert(converter = StringConverter.class, columnType = String.class)
     private ArrayList<String> participants;
+
     private String location;
+
+//    @Convert(converter = DoubleConverter.class, columnType = Double.class)
     private ArrayList<Double> coordinates;
 
-    public Event(){
+    public Event() {
 
     }
+//
+//    public static class StringConverter implements PropertyConverter<ArrayList<String>, String> {
+//        @Override
+//        public ArrayList<String> convertToEntityProperty(String databaseValue) {
+//            if (databaseValue == null) {
+//                return null;
+//            }
+//            else {
+//                ArrayList<String> list = (ArrayList<String>) Arrays.asList(databaseValue.split(","));
+//                return list;
+//            }
+//        }
+//
+//        @Override
+//        public String convertToDatabaseValue(ArrayList<String> entityProperty) {
+//            if(entityProperty==null){
+//                return null;
+//            }
+//            else{
+//                StringBuilder sb= new StringBuilder();
+//                for(String link:entityProperty){
+//                    sb.append(link);
+//                    sb.append(",");
+//                }
+//                return sb.toString();
+//            }
+//        }
+//    }
+//
+//    public static class DoubleConverter implements PropertyConverter<ArrayList<Double>, Double> {
+//        @Override
+//        public ArrayList<Double> convertToEntityProperty(Double databaseValue) {
+//            if (databaseValue == null) {
+//                return null;
+//            }
+//            else {
+//                ArrayList<Double> list = (ArrayList<Double>) Arrays.asList(databaseValue);
+//                return list;
+//            }
+//        }
+//
+//        @Override
+//        public Double convertToDatabaseValue(ArrayList<Double> entityProperty) {
+//            if(entityProperty==null){
+//                return null;
+//            }
+//            else{
+//                StringBuilder sb= new StringBuilder();
+//                for(Double val:entityProperty){
+//                    sb.append(val);
+//                    sb.append(",");
+//                }
+//                return Double.valueOf(sb.toString());
+//            }
+//        }
+//    }
 
     public Event(Parcel in) {
         id = in.readString();
         name = in.readString();
         description = in.readString();
+        sport = in.readString();
+        playersCount = in.readInt();
         date = in.readString();
         time = in.readString();
         authorName = in.readString();
@@ -43,6 +116,8 @@ public class Event implements Parcelable {
         out.writeString(id);
         out.writeString(name);
         out.writeString(description);
+        out.writeString(sport);
+        out.writeInt(playersCount);
         out.writeString(date);
         out.writeString(time);
         out.writeString(authorName);
@@ -52,36 +127,31 @@ public class Event implements Parcelable {
         out.writeSerializable(coordinates);
     }
 
-    public static final Parcelable.Creator<Event> CREATOR = new Parcelable.Creator<Event>(){
+    public static final Parcelable.Creator<Event> CREATOR = new Parcelable.Creator<Event>() {
         public Event createFromParcel(Parcel in) {
             return new Event(in);
         }
+
         public Event[] newArray(int size) {
             return new Event[size];
         }
     };
 
-    public Event(
-            String id,
-            String name,
-            String description,
-            String date,
-            String time,
-            String authorName,
-            String authorId,
-            ArrayList<String> participants,
-            String location,
-            ArrayList<Double> coordinates) {
-        setId(id);
-        setName(name);
-        setDescription(description);
-        setDate(date);
-        setTime(time);
-        setAuthorName(authorName);
-        setAuthorId(authorId);
-        setParticipants(participants);
-        setLocation(location);
-        setCoordintes(coordinates);
+    public Event(String id, String name, String description, String sport, Integer playersCount,
+            String date, String time, String authorName, String authorId,
+            ArrayList<String> participants, String location, ArrayList<Double> coordinates) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.sport = sport;
+        this.playersCount = playersCount;
+        this.date = date;
+        this.time = time;
+        this.authorName = authorName;
+        this.authorId = authorId;
+        this.participants = participants;
+        this.location = location;
+        this.coordinates = coordinates;
     }
 
     public String getId() {
@@ -106,6 +176,22 @@ public class Event implements Parcelable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getSport() {
+        return this.sport;
+    }
+
+    public void setSport(String sport) {
+        this.sport = sport;
+    }
+
+    public Integer getPlayersCount() {
+        return this.playersCount;
+    }
+
+    public void setPlayersCount(Integer playersCount) {
+        this.playersCount = playersCount;
     }
 
     public String getDate() {
@@ -140,8 +226,8 @@ public class Event implements Parcelable {
         this.authorId = mAuthorId;
     }
 
-    public ArrayList<String> getParticipants(){
-        if(this.participants == null){
+    public ArrayList<String> getParticipants() {
+        if (this.participants == null) {
             this.participants = new ArrayList<>();
         }
 
@@ -152,11 +238,11 @@ public class Event implements Parcelable {
         this.participants = participants;
     }
 
-    public void addParticipant(String id){
+    public void addParticipant(String id) {
         this.participants.add(id);
     }
 
-    public void removeParticipant(String id){
+    public void removeParticipant(String id) {
         this.participants.remove(id);
     }
 
@@ -165,7 +251,7 @@ public class Event implements Parcelable {
         return 0;
     }
 
-    public String getLocation(){
+    public String getLocation() {
         return location;
     }
 
@@ -173,15 +259,15 @@ public class Event implements Parcelable {
         this.location = location;
     }
 
-    public ArrayList<Double> getCoordinates(){
-        if(this.coordinates == null){
+    public ArrayList<Double> getCoordinates() {
+        if (this.coordinates == null) {
             this.coordinates = new ArrayList<>();
         }
 
         return this.coordinates;
     }
 
-    public void setCoordintes(ArrayList<Double> coordinates) {
+    public void setCoordinates(ArrayList<Double> coordinates) {
         this.coordinates = coordinates;
     }
 }
