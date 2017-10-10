@@ -3,6 +3,7 @@ package com.teamup.mihaylov.teamup.base.authentication;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -106,17 +107,20 @@ public class AuthenticationProvider implements FirebaseAuth.AuthStateListener, G
             public void subscribe(final ObservableEmitter<Boolean> emitter) throws Exception {
                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest
                         .Builder()
-                        .setDisplayName(displayName).build();
+                        .setDisplayName(displayName)
+                        .build();
 
                 String uid = mUser.getUid();
                 mUsersData.setKey(uid);
-                mUsersData.add(new User(uid, displayName, null, null));
+                mUsersData.add(new User(uid, displayName));
 
-                mUser.updateProfile(profileUpdates)
-                        .addOnCompleteListener(mActivity, new OnCompleteListener<Void>() {
+                mUser.updateProfile(profileUpdates).addOnCompleteListener(mActivity, new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                emitter.onNext(true);
+                                if (task.isSuccessful()) {
+                                    emitter.onNext(true);
+                                    emitter.onComplete();
+                                }
                             }
                         });
             }
@@ -134,7 +138,9 @@ public class AuthenticationProvider implements FirebaseAuth.AuthStateListener, G
                                 if (task.isSuccessful()) {
                                     Toast.makeText(mContext, "createUserWithEmail:onComplete:" + task.isSuccessful(), Toast.LENGTH_SHORT).show();
 
-                                    updateUserProfile(displayName)
+                                    Observable<Boolean> observable = updateUserProfile(displayName);
+
+                                    observable
                                             .subscribeOn(Schedulers.io())
                                             .observeOn(AndroidSchedulers.mainThread())
                                             .subscribe(new Consumer<Boolean>() {
@@ -142,15 +148,17 @@ public class AuthenticationProvider implements FirebaseAuth.AuthStateListener, G
                                                 public void accept(Boolean isSuccessful) throws Exception {
                                                     if (isSuccessful) {
                                                         emitter.onNext(true);
+                                                        emitter.onComplete();
                                                     }
                                                 }
                                             }, new Consumer<Throwable>() {
                                                 @Override
                                                 public void accept(Throwable throwable) throws Exception {
                                                     throwable.printStackTrace();
+                                                    emitter.onNext(false);
+                                                    emitter.onComplete();
                                                 }
                                             });
-
                                 } else if (!task.isSuccessful()) {
                                     Toast.makeText(mContext, "Authentication failed." + task.getException(), Toast.LENGTH_LONG).show();
                                     emitter.onNext(false);
