@@ -5,11 +5,21 @@
     tools:context="com.teamup.mihaylov.teamup.SignUp.SignUpActivity">
 
     <LinearLayout
+        android:id="@+id/loading_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/content_container"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:background="@color/colorBackground"
         android:gravity="center"
         android:orientation="vertical"
-        android:background="@color/colorBackground"
         android:padding="16dip">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -18,7 +28,8 @@
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="20dip"
+            android:layout_marginTop="30dp"
             android:src="@drawable/logo" />
 
         <android.support.design.widget.TextInputLayout
@@ -88,39 +99,31 @@
             android:id="@+id/btn_sign_up"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/btn_sign_up"
             android:layout_marginTop="15dip"
+            android:background="@color/colorPrimaryDark"
+            android:text="@string/btn_sign_up"
             android:textColor="@android:color/white"
-            android:background="@color/colorPrimary"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/btn_reset_password"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dip"
+            android:layout_marginTop="15dp"
             android:background="@null"
             android:text="@string/btn_forgot_password"
-            android:textColor="@color/colorAccent"
-            android:textAllCaps="false"/>
+            android:textAllCaps="false"
+            android:textColor="@color/colorAccent" />
 
         <Button
             android:id="@+id/btn_sign_in"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dip"
+            android:layout_marginTop="5dp"
             android:background="@null"
             android:text="@string/btn_link_to_login"
-            android:textAllCaps="false"/>
+            android:textAllCaps="false" />
 
     </LinearLayout>
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center|bottom"
-        android:layout_marginBottom="20dp"
-        android:visibility="gone" />
 
 </FrameLayout>

@@ -5,6 +5,15 @@
     android:layout_height="match_parent"
     tools:context="com.teamup.mihaylov.teamup.Events.ListEvents.ListEventsActivity">
 
+    <LinearLayout
+        android:id="@+id/loading_container"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/events_list"
         android:layout_width="match_parent"

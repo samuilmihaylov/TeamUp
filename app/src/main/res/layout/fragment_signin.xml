@@ -1,24 +1,36 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.teamup.mihaylov.teamup.SignIn.SignInActivity">
 
     <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:id="@+id/loading_container"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/content_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/colorBackground"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="16dp">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/logo_image"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="30dip"
+            android:layout_marginBottom="20dip"
+            android:layout_marginTop="30dp"
             android:src="@drawable/logo" />
 
         <android.support.design.widget.TextInputLayout
@@ -58,27 +70,37 @@
             android:id="@+id/btn_sign_in"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/btn_sign_in"
             android:layout_marginTop="15dp"
+            android:background="@color/colorPrimaryDark"
+            android:text="@string/btn_sign_in"
             android:textColor="@android:color/white"
-            android:background="@color/colorPrimary"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="15dp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textSize="16dp"
+            android:text="Or"/>
+
 
         <com.google.android.gms.common.SignInButton
-            android:id="@+id/sign_in_button"
+            android:id="@+id/google_sign_in_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"/>
+            android:layout_marginTop="15dp" />
 
         <Button
             android:id="@+id/btn_reset_password"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dip"
-            android:text="@string/btn_forgot_password"
             android:background="@null"
-            android:textColor="@color/colorAccent"
-            android:textAllCaps="false"/>
+            android:text="@string/btn_forgot_password"
+            android:textAllCaps="false"
+            android:textColor="@color/colorAccent" />
 
         <Button
             android:id="@+id/btn_sign_up"
@@ -87,7 +109,7 @@
             android:layout_marginTop="20dp"
             android:background="@null"
             android:text="@string/btn_link_to_register"
-            android:textAllCaps="false"/>
+            android:textAllCaps="false" />
 
     </LinearLayout>
 
@@ -98,5 +120,4 @@
         android:layout_gravity="center|bottom"
         android:layout_marginBottom="20dip"
         android:visibility="gone" />
-
 </FrameLayout>

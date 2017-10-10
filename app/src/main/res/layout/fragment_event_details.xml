@@ -11,57 +11,299 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.teamup.mihaylov.teamup.Events.EventDetails.EventDetailsActivity">
 
-    <TextView
-        android:id="@+id/event_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/event_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <RelativeLayout
+        android:id="@+id/content_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.google.android.gms.maps.MapView
-            android:id="@+id/map"
+        <LinearLayout
+            android:id="@+id/event_author_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-    </FrameLayout>
+            <com.mikepenz.iconics.view.IconicsButton
+                android:id="@+id/person_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="28sp"
+                android:minWidth="50dp"
+                android:layout_marginTop="8dp"
+                android:paddingLeft="0dp"
+                android:layout_marginLeft="0dp"
+                android:background="@null"
+                android:text="{gmd-person}"
+                android:textColor="@color/colorPrimary"
+                android:textSize="28sp" />
 
-    <Button
-        android:id="@+id/btn_join_event"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_join_event"
-        android:layout_marginTop="15dp"
-        android:textColor="@android:color/white"
-        android:background="@color/colorPrimary"
-        android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/event_author"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/person_icon"
+                android:layout_toRightOf="@+id/person_icon"
+                android:gravity="center|left"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_leave_event"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_leave_event"
-        android:layout_marginTop="15dp"
-        android:textColor="@android:color/white"
-        android:background="@color/colorPrimary"
-        android:textStyle="bold"/>
+        <LinearLayout
+            android:id="@+id/event_name_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/event_author_layout"
+            android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/btn_edit_event"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_edit_event"
-        android:layout_marginTop="15dp"
-        android:textColor="@android:color/white"
-        android:background="@color/colorPrimary"
-        android:textStyle="bold"/>
+            <com.mikepenz.iconics.view.IconicsButton
+                android:id="@+id/event_name_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="28sp"
+                android:minWidth="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@null"
+                android:text="{gmd-event-note}"
+                android:textColor="@color/colorPrimary"
+                android:textSize="28sp" />
+
+            <TextView
+                android:id="@+id/event_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/event_name_icon"
+                android:layout_toRightOf="@+id/event_name_icon"
+                android:gravity="center|left"
+                android:textStyle="bold"
+                android:textSize="16dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/event_description_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/event_name_layout"
+            android:orientation="horizontal">
+
+            <com.mikepenz.iconics.view.IconicsButton
+                android:id="@+id/event_description_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="28sp"
+                android:minWidth="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@null"
+                android:text="{gmd-description}"
+                android:textColor="@color/colorPrimary"
+                android:textSize="28sp" />
+
+            <TextView
+                android:id="@+id/event_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/event_description_icon"
+                android:layout_toRightOf="@+id/event_description_icon"
+                android:gravity="center|left"
+                android:textStyle="bold"
+                android:textSize="16dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/event_sport_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/event_description_layout"
+            android:orientation="horizontal">
+
+            <com.mikepenz.iconics.view.IconicsButton
+                android:id="@+id/event_sport_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="28sp"
+                android:minWidth="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@null"
+                android:text="{gmd-fitness-center}"
+                android:textColor="@color/colorPrimary"
+                android:textSize="28sp" />
+
+            <TextView
+                android:id="@+id/event_sport"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/event_sport_icon"
+                android:layout_toRightOf="@+id/event_sport_icon"
+                android:gravity="center|left"
+                android:textStyle="bold"
+                android:textSize="16dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/event_date_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/event_sport_layout"
+            android:orientation="horizontal">
+
+            <com.mikepenz.iconics.view.IconicsButton
+                android:id="@+id/event_date_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="28sp"
+                android:minWidth="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@null"
+                android:text="{gmd-date-range}"
+                android:textColor="@color/colorPrimary"
+                android:textSize="28sp" />
+
+            <TextView
+                android:id="@+id/event_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/event_date_icon"
+                android:layout_toRightOf="@+id/event_date_icon"
+                android:gravity="center|left"
+                android:textStyle="bold"
+                android:textSize="16dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/event_time_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/event_date_layout"
+            android:orientation="horizontal">
+
+            <com.mikepenz.iconics.view.IconicsButton
+                android:id="@+id/event_time_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="28sp"
+                android:minWidth="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@null"
+                android:text="{gmd-access-time}"
+                android:textColor="@color/colorPrimary"
+                android:textSize="28sp" />
+
+            <TextView
+                android:id="@+id/event_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/event_time_icon"
+                android:layout_toRightOf="@+id/event_time_icon"
+                android:gravity="center|left"
+                android:textStyle="bold"
+                android:textSize="16dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/event_people_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/event_time_layout"
+            android:orientation="horizontal">
+
+            <com.mikepenz.iconics.view.IconicsButton
+                android:id="@+id/event_people_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="28sp"
+                android:minWidth="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@null"
+                android:text="{gmd-people}"
+                android:textColor="@color/colorPrimary"
+                android:textSize="28sp" />
+
+            <TextView
+                android:id="@+id/event_people"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/event_people_icon"
+                android:layout_toRightOf="@+id/event_people_icon"
+                android:gravity="center|left"
+                android:textStyle="bold"
+                android:textSize="16dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/event_location_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/event_people_layout"
+            android:orientation="horizontal">
+
+            <com.mikepenz.iconics.view.IconicsButton
+                android:id="@+id/event_location_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="28sp"
+                android:minWidth="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@null"
+                android:text="{gmd-location-on}"
+                android:textColor="@color/colorPrimary"
+                android:textSize="28sp" />
+
+            <TextView
+                android:id="@+id/event_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/event_location_icon"
+                android:layout_toRightOf="@+id/event_location_icon"
+                android:gravity="center|left"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:layout_marginBottom="15dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/map_container"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_below="@+id/event_location_layout">
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/map"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_join_event"
+            android:layout_below="@+id/map_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:background="@color/colorPrimaryDark"
+            android:text="@string/btn_join_event"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btn_leave_event"
+            android:layout_below="@+id/map_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:background="@color/colorPrimaryDark"
+            android:text="@string/btn_leave_event"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btn_edit_event"
+            android:layout_below="@+id/map_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:background="@color/colorPrimaryDark"
+            android:text="@string/btn_edit_event"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
 
 </android.support.v7.widget.LinearLayoutCompat>

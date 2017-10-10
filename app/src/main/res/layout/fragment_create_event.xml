@@ -12,6 +12,7 @@
         android:id="@+id/linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
         android:orientation="vertical">
 
         <android.support.design.widget.TextInputLayout
@@ -61,6 +62,22 @@
 
         </android.support.design.widget.TextInputLayout>
 
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/input_players_count"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusableInTouchMode="true"
+                android:hint="@string/hint_players_count"
+                android:inputType="number"
+                android:maxLines="1"
+                android:textColor="@android:color/black" />
+
+        </android.support.design.widget.TextInputLayout>
+
     </LinearLayout>
 
     <RelativeLayout
@@ -71,51 +88,24 @@
         android:layout_below="@+id/linear_layout">
 
         <LinearLayout
-            android:id="@+id/pick_date_location"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true">
-
-            <com.mikepenz.iconics.view.IconicsButton
-                android:id="@+id/btn_pick_location"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@null"
-                android:text="{gmd-place}"
-                android:textColor="@android:color/black"
-                android:textSize="32sp" />
-
-            <TextView
-                android:id="@+id/show_location"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center|left"
-                android:layout_toEndOf="@+id/btn_pick_location"
-                android:layout_toRightOf="@+id/btn_pick_location"
-                android:inputType="textMultiLine" />
-
-        </LinearLayout>
-
-        <LinearLayout
             android:id="@+id/pick_date_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/pick_date_location"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
             android:orientation="horizontal">
 
             <com.mikepenz.iconics.view.IconicsButton
                 android:id="@+id/btn_pick_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minWidth="50dp"
                 android:layout_marginTop="10dp"
                 android:background="@null"
                 android:text="{gmd-date-range}"
-                android:textColor="@android:color/black"
-                android:textSize="32sp" />
+                android:textColor="@color/colorPrimary"
+                android:textSize="34sp" />
 
             <TextView
                 android:id="@+id/show_date"
@@ -123,7 +113,8 @@
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@+id/btn_pick_date"
                 android:layout_toRightOf="@+id/btn_pick_date"
-                android:inputType="textNoSuggestions" />
+                android:textSize="16dp"
+                android:inputType="date" />
 
         </LinearLayout>
 
@@ -138,12 +129,13 @@
                 android:id="@+id/btn_pick_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minWidth="50dp"
                 android:layout_below="@+id/btn_pick_date"
                 android:layout_marginTop="10dp"
                 android:background="@null"
                 android:text="{gmd-access-time}"
-                android:textColor="@android:color/black"
-                android:textSize="32sp" />
+                android:textColor="@color/colorPrimary"
+                android:textSize="34sp" />
 
             <TextView
                 android:id="@+id/show_time"
@@ -151,28 +143,50 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/show_date"
                 android:layout_toRightOf="@+id/btn_pick_time"
-                android:inputType="textNoSuggestions" />
+                android:textSize="16dp"
+                android:inputType="time" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/pick_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/pick_time_layout"
+            android:orientation="horizontal">
+
+            <com.mikepenz.iconics.view.IconicsButton
+                android:id="@+id/btn_pick_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="50dp"
+                android:layout_marginTop="10dp"
+                android:background="@null"
+                android:text="{gmd-place}"
+                android:textColor="@color/colorPrimary"
+                android:textSize="34sp" />
+
+            <TextView
+                android:id="@+id/input_show_location"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toEndOf="@+id/btn_pick_location"
+                android:layout_toRightOf="@+id/btn_pick_location"
+                android:gravity="center|left"
+                android:textSize="16dp"
+                android:inputType="textMultiLine" />
+
         </LinearLayout>
 
         <Button
             android:id="@+id/btn_create_event"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/pick_time_layout"
-            android:layout_marginTop="15dp"
-            android:background="@color/colorPrimary"
+            android:layout_alignParentBottom="true"
+            android:background="@color/colorPrimaryDark"
             android:text="@string/btn_create_event"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
 
     </RelativeLayout>
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center|bottom"
-        android:layout_marginBottom="20dip"
-        android:visibility="gone" />
 
 </RelativeLayout>

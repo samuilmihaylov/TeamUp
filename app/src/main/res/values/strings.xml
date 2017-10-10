@@ -1,13 +1,15 @@
 <resources>
     <string name="app_name">TeamUp</string>
+    <string name="moto_text">Let the games begin! </string>
+    <string name="welcome_events_list_link">Your teammates are waiting for you! Click here and...</string>
     <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
 
     <!-- Buttons -->
     <string name="btn_sign_in">Sign In</string>
     <string name="btn_sign_up">Sign Up</string>
     <string name="btn_sign_out">Sign Out</string>
-    <string name="btn_link_to_login">Already signed up? Sign In</string>
-    <string name="btn_link_to_register">Not signed up? Sign Up now</string>
+    <string name="btn_link_to_login">Already signed up? Sign In now!</string>
+    <string name="btn_link_to_register">Not signed up? Sign Up now!</string>
     <string name="btn_forgot_password">Forgot your password?</string>
 
     <string name="btn_create_event">Create event</string>
@@ -31,6 +33,7 @@
     <string name="hint_event_name">Event name</string>
     <string name="hint_event_description">Event description</string>
     <string name="hint_event_sport">Type of sport</string>
+    <string name="hint_players_count">Players count</string>
 
     <!-- Drawer -->
     <!-- Navigation Drawer items -->
@@ -48,6 +51,8 @@
     <string name="btn_join_event">Join</string>
     <string name="btn_edit_event">Edit</string>
     <string name="btn_leave_event">Leave</string>
+    <string name="google_sign_in">Sign in with Google</string>
+    <string name="welcome_text">Welcome to</string>
 
     <string-array name="my_collections_dropdown">
         <item>My Collections</item>
