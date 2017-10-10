@@ -2,6 +2,7 @@ package com.teamup.mihaylov.teamup.base.dagger;
 
 import android.app.Application;
 
+import com.teamup.mihaylov.teamup.ConfigModule;
 import com.teamup.mihaylov.teamup.TeamUpApplication;
 import com.teamup.mihaylov.teamup.base.authentication.AuthenticationModule;
 import com.teamup.mihaylov.teamup.base.data.DataModule;
@@ -20,6 +21,7 @@ import dagger.android.support.AndroidSupportInjectionModule;
 
 @Singleton
 @Component(modules = {
+        ConfigModule.class,
         ApplicationModule.class,
         ActivityBindingModule.class,
         AndroidSupportInjectionModule.class,

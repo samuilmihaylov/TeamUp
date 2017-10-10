@@ -1,5 +1,7 @@
 package com.teamup.mihaylov.teamup.base.contracts;
 
+import java.io.Serializable;
+
 /**
  * Created by samui on 3.10.2017 г..
  */
@@ -37,5 +39,22 @@ public abstract class BaseContracts {
          * Releases the presenter
          */
         void unsubscribe();
+    }
+
+    public interface ViewStatePresenter<T extends View, S extends ViewState> extends Presenter<T> {
+        void setViewState(S viewState);
+
+        S getViewState();
+    }
+
+    /**
+     * Base router for MVP
+     */
+    public interface Router {
+
+    }
+
+    public interface ViewState extends Serializable {
+
     }
 }
