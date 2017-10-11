@@ -1,12 +1,9 @@
-package com.teamup.mihaylov.teamup.Events.ListEvents;
+package com.teamup.mihaylov.teamup.Events.ListEvents.ListAllEvents;
 
 import com.teamup.mihaylov.teamup.base.contracts.BaseContracts;
 import com.teamup.mihaylov.teamup.base.models.Event;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import io.reactivex.Observable;
 
 /**
  * Created by samui on 5.10.2017 г..
@@ -22,5 +19,7 @@ public interface ListEventsContracts {
         void load();
 
         Boolean isAuthenticated();
+
+        String getUid();
     }
 }

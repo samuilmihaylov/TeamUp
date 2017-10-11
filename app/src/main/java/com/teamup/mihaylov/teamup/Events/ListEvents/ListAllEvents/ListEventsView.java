@@ -1,4 +1,4 @@
-package com.teamup.mihaylov.teamup.Events.ListEvents;
+package com.teamup.mihaylov.teamup.Events.ListEvents.ListAllEvents;
 
 
 import android.content.Intent;
@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,14 +16,11 @@ import com.teamup.mihaylov.teamup.Events.EventDetails.EventDetailsActivity;
 import com.teamup.mihaylov.teamup.Events.ListEvents.base.EventsAdapter;
 import com.teamup.mihaylov.teamup.Events.ListEvents.base.RecyclerItemListener;
 import com.teamup.mihaylov.teamup.R;
-import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
 import com.teamup.mihaylov.teamup.base.models.Event;
 import com.teamup.mihaylov.teamup.base.utils.ui.LoadingIndicator;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.inject.Inject;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -112,20 +108,34 @@ public class ListEventsView extends Fragment implements ListEventsContracts.View
     @Override
     public void onPause() {
         super.onPause();
-        mPresenter.unsubscribe();
+        if (mPresenter != null) {
+            mPresenter.unsubscribe();
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mPresenter.unsubscribe();
-        mPresenter = null;
+        if (mPresenter != null) {
+            mPresenter.unsubscribe();
+        }
     }
 
     @Override
     public void setEvents(List<Event> events) {
         mEventsList.clear();
-        mEventsList.addAll(events);
+        if (mPresenter.isAuthenticated()) {
+            String uid = mPresenter.getUid();
+            for (Event event : events) {
+                if (!event.getAuthorId().equals(uid)
+                        && !event.getParticipants().contains(uid)) {
+                    mEventsList.add(event);
+                }
+            }
+        } else {
+            mEventsList.addAll(events);
+        }
+
         mAdapter.notifyDataSetChanged();
         hideLoading();
     }

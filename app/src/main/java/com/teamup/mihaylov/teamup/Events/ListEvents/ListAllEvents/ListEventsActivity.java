@@ -1,4 +1,4 @@
-package com.teamup.mihaylov.teamup.Events.ListEvents;
+package com.teamup.mihaylov.teamup.Events.ListEvents.ListAllEvents;
 
 import android.os.Bundle;
 
