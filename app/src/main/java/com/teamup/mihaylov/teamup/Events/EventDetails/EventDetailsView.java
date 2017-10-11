@@ -184,20 +184,25 @@ public class EventDetailsView extends Fragment implements EventDetailsContracts.
 
     @Override
     public void onResume() {
-        mPresenter.subscribe(this);
         super.onResume();
+        mPresenter.subscribe(this);
     }
 
     @Override
     public void onPause() {
-        mPresenter.unsubscribe();
         super.onPause();
+        if (mPresenter != null) {
+            mPresenter.unsubscribe();
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mPresenter.unsubscribe();
+        if (mPresenter != null) {
+            mPresenter.unsubscribe();
+        }
+
         mPresenter = null;
     }
 

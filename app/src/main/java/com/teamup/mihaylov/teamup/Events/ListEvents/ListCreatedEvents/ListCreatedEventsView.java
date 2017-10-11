@@ -94,13 +94,18 @@ public class ListCreatedEventsView extends Fragment implements ListCreatedEvents
     @Override
     public void onPause() {
         super.onPause();
-        mPresenter.unsubscribe();
+        if (mPresenter != null) {
+            mPresenter.unsubscribe();
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mPresenter.unsubscribe();
+        if (mPresenter != null) {
+            mPresenter.unsubscribe();
+        }
+
         mPresenter = null;
     }
 

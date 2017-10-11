@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.teamup.mihaylov.teamup.Events.ListEvents.ListEventsActivity;
+import com.teamup.mihaylov.teamup.Events.ListEvents.ListAllEvents.ListEventsActivity;
 import com.teamup.mihaylov.teamup.R;
 
 /**
@@ -35,7 +35,7 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_home, container, false);
 
-        mWelcomeEventsListLink = (TextView) view.findViewById(R.id.home_text);
+        mWelcomeEventsListLink = (TextView) view.findViewById(R.id.moto_text);
         mWelcomeEventsListLink.setOnClickListener(mWelcomeEventsListLinkListener);
 
         return view;

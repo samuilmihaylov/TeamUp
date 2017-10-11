@@ -2,14 +2,9 @@ package com.teamup.mihaylov.teamup.Events.ListEvents.base;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-
-import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
-
-import javax.inject.Inject;
 
 /**
  * Created by samui on 1.10.2017 г..

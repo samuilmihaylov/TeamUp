@@ -3,7 +3,6 @@ package com.teamup.mihaylov.teamup.UserProfile;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -225,15 +224,10 @@ public class UserBasicProfileView extends Fragment implements UserProfileContrac
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        mPresenter.unsubscribe();
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
-        mPresenter.unsubscribe();
-        mPresenter = null;
+        if (mPresenter != null) {
+            mPresenter.unsubscribe();
+        }
     }
 }

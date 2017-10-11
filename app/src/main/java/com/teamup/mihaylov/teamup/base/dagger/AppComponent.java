@@ -6,6 +6,7 @@ import com.teamup.mihaylov.teamup.ConfigModule;
 import com.teamup.mihaylov.teamup.TeamUpApplication;
 import com.teamup.mihaylov.teamup.base.authentication.AuthenticationModule;
 import com.teamup.mihaylov.teamup.base.data.DataModule;
+import com.teamup.mihaylov.teamup.base.utils.schedulers.SchedulersModule;
 
 import javax.inject.Singleton;
 
@@ -26,7 +27,8 @@ import dagger.android.support.AndroidSupportInjectionModule;
         ActivityBindingModule.class,
         AndroidSupportInjectionModule.class,
         AuthenticationModule.class,
-        DataModule.class
+        DataModule.class,
+        SchedulersModule.class
 })
 
 public interface AppComponent extends AndroidInjector<DaggerApplication> {

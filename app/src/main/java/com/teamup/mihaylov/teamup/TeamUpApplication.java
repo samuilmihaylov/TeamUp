@@ -4,6 +4,10 @@ import com.teamup.mihaylov.teamup.base.BaseActivity;
 import com.teamup.mihaylov.teamup.base.contracts.CurrentActivityProvider;
 import com.teamup.mihaylov.teamup.base.dagger.AppComponent;
 import com.teamup.mihaylov.teamup.base.dagger.DaggerAppComponent;
+import com.teamup.mihaylov.teamup.base.models.DaoMaster;
+import com.teamup.mihaylov.teamup.base.models.DaoSession;
+
+import org.greenrobot.greendao.database.Database;
 
 import dagger.android.AndroidInjector;
 import dagger.android.DaggerApplication;
@@ -14,20 +18,21 @@ import dagger.android.DaggerApplication;
 
 public class TeamUpApplication extends DaggerApplication implements CurrentActivityProvider {
     private BaseActivity mCurrentActivity;
+    private DaoSession mDaoSession;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-//        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "notes-db");
-//        Database db = helper.getWritableDb();
-//        mDaoSession = new DaoMaster(db).newSession();
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "users-db");
+        Database db = helper.getWritableDb();
+        mDaoSession = new DaoMaster(db).newSession();
     }
 
 
-//    public DaoSession getDaoSession() {
-//        return mDaoSession;
-//    }
+    public DaoSession getDaoSession() {
+        return mDaoSession;
+    }
 
     @Override
     protected AndroidInjector<? extends DaggerApplication> applicationInjector() {

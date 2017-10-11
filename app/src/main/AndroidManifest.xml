@@ -13,7 +13,7 @@
     <application
         android:name=".TeamUpApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -43,7 +43,7 @@
         <activity android:name=".SignIn.SignInActivity" />
         <activity android:name=".SignUp.SignUpActivity" />
         <activity android:name=".Events.CreateEvent.CreateEventActivity" />
-        <activity android:name=".Events.ListEvents.ListEventsActivity" />
+        <activity android:name=".Events.ListEvents.ListAllEvents.ListEventsActivity" />
         <activity android:name=".Events.EventDetails.EventDetailsActivity" />
         <activity android:name=".Events.ListEvents.ListCreatedEvents.ListCreatedEventsActivity" />
         <activity android:name=".Events.ListEvents.ListJoinedEvents.ListJoinedEventsActivity"></activity>

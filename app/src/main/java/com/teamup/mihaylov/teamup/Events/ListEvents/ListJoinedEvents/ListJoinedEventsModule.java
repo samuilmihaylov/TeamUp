@@ -3,8 +3,7 @@ package com.teamup.mihaylov.teamup.Events.ListEvents.ListJoinedEvents;
 import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
 import com.teamup.mihaylov.teamup.base.data.RemoteUsersData;
 import com.teamup.mihaylov.teamup.base.models.User;
-
-import javax.inject.Named;
+import com.teamup.mihaylov.teamup.base.utils.schedulers.BaseSchedulerProvider;
 
 import dagger.Module;
 import dagger.Provides;
@@ -17,7 +16,7 @@ import dagger.Provides;
 public class ListJoinedEventsModule {
     @Provides
     ListJoinedEventsContracts.Presenter provideListJoinedEventsPresenter(
-            AuthenticationProvider authProvider, RemoteUsersData<User> data) {
-        return new ListJoinedEventsPresenter(authProvider, data);
+            AuthenticationProvider authProvider, RemoteUsersData<User> data, BaseSchedulerProvider schedulerProvider) {
+        return new ListJoinedEventsPresenter(authProvider, data, schedulerProvider);
     }
 }

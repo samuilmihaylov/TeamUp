@@ -1,7 +1,15 @@
 package com.teamup.mihaylov.teamup.base.data;
 
+import android.content.Context;
+
+import com.teamup.mihaylov.teamup.base.models.DaoMaster;
+import com.teamup.mihaylov.teamup.base.models.DaoSession;
+import com.teamup.mihaylov.teamup.base.models.DaoUser;
 import com.teamup.mihaylov.teamup.base.models.Event;
 import com.teamup.mihaylov.teamup.base.models.User;
+
+import org.greenrobot.greendao.AbstractDao;
+import org.greenrobot.greendao.database.Database;
 
 import dagger.Module;
 import dagger.Provides;
@@ -13,13 +21,13 @@ import dagger.Provides;
 @Module
 public class DataModule {
 
-//    @Provides
-//    AbstractDao<Event, String> provideEventDao(Context context) {
-//        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(context, "events-db");
-//        Database db = helper.getWritableDb();
-//        DaoSession daoSession = new DaoMaster(db).newSession();
-//        return daoSession.getEventDao();
-//    }
+    @Provides
+    AbstractDao<DaoUser, String> providePersonDao(Context context) {
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(context, "users-db");
+        Database db = helper.getWritableDb();
+        DaoSession daoSession = new DaoMaster(db).newSession();
+        return daoSession.getDaoUserDao();
+    }
 
     @Provides
     BaseData<User> provideRemoteUsersData() {
@@ -31,8 +39,8 @@ public class DataModule {
         return new RemoteEventsData<>();
     }
 
-//    @Provides
-//    BaseData<Event> provideLocalEventsData(AbstractDao<Event, String> dao) {
-//        return new LocalEventsData<>(dao);
-//    }
+    @Provides
+    BaseData<DaoUser> provideLocalUsersData(AbstractDao<DaoUser, String> dao) {
+        return new LocalUsersData<>(dao);
+    }
 }

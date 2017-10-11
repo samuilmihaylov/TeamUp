@@ -119,6 +119,8 @@ public class ListEventsView extends Fragment implements ListEventsContracts.View
         if (mPresenter != null) {
             mPresenter.unsubscribe();
         }
+
+        mPresenter = null;
     }
 
     @Override

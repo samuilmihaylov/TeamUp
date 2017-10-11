@@ -3,7 +3,6 @@ package com.teamup.mihaylov.teamup.Events.ListEvents.ListJoinedEvents;
 import com.teamup.mihaylov.teamup.base.contracts.BaseContracts;
 import com.teamup.mihaylov.teamup.base.models.Event;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

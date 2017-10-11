@@ -103,7 +103,7 @@ public class SignInView extends Fragment implements SignInContracts.View, Loadin
         @Override
         public void onClick(View view) {
             showLoading();
-            ((SignInActivity) getActivity()).signInWithGoogle();
+            mPresenter.signInWithGoogle();
         }
     };
 
@@ -140,7 +140,6 @@ public class SignInView extends Fragment implements SignInContracts.View, Loadin
     }
 
     protected void customizeSignInBtn(SignInButton signInButton, String buttonText) {
-
         SpannableStringBuilder sBuilder = new SpannableStringBuilder();
         sBuilder.append(buttonText);
         CalligraphyTypefaceSpan typefaceSpan =
@@ -173,13 +172,18 @@ public class SignInView extends Fragment implements SignInContracts.View, Loadin
     @Override
     public void onPause() {
         super.onPause();
-        mPresenter.unsubscribe();
+        if (mPresenter != null) {
+            mPresenter.unsubscribe();
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mPresenter.unsubscribe();
+        if (mPresenter != null) {
+            mPresenter.unsubscribe();
+        }
+
         mPresenter = null;
     }
 
@@ -201,5 +205,11 @@ public class SignInView extends Fragment implements SignInContracts.View, Loadin
     @Override
     public void hideLoading() {
         LoadingIndicator.hideLoadingIndicator(SignInView.this);
+    }
+
+    @Override
+    public void navigate() {
+        Intent intent = new Intent(getContext(), DrawerNavMainActivity.class);
+        startActivity(intent);
     }
 }

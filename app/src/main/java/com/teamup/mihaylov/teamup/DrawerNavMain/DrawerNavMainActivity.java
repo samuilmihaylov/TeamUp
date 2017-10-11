@@ -39,7 +39,7 @@ import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerUIUtils;
 import com.teamup.mihaylov.teamup.Events.CreateEvent.CreateEventActivity;
-import com.teamup.mihaylov.teamup.Events.ListEvents.ListEventsActivity;
+import com.teamup.mihaylov.teamup.Events.ListEvents.ListAllEvents.ListEventsActivity;
 import com.teamup.mihaylov.teamup.Home.HomeFragment;
 import com.teamup.mihaylov.teamup.SignUp.SignUpActivity;
 import com.teamup.mihaylov.teamup.UserProfile.UserProfileActivity;
@@ -47,14 +47,13 @@ import com.teamup.mihaylov.teamup.R;
 import com.teamup.mihaylov.teamup.SignIn.SignInActivity;
 import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
 import com.teamup.mihaylov.teamup.base.BaseActivity;
+import com.teamup.mihaylov.teamup.base.data.LocalUsersData;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class DrawerNavMainActivity extends BaseActivity {
 

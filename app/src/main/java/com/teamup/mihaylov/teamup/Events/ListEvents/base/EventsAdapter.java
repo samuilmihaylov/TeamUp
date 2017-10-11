@@ -9,7 +9,6 @@ import android.widget.TextView;
 import com.teamup.mihaylov.teamup.R;
 import com.teamup.mihaylov.teamup.base.models.Event;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

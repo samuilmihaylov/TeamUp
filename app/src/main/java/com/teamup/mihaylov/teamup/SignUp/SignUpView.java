@@ -145,14 +145,18 @@ public class SignUpView extends Fragment implements SignUpContracts.View, Loadin
     @Override
     public void onPause() {
         super.onPause();
-        mPresenter.unsubscribe();
+        if (mPresenter != null) {
+            mPresenter.unsubscribe();
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        hideLoading();
-        mPresenter.unsubscribe();
+        if (mPresenter != null) {
+            mPresenter.unsubscribe();
+        }
+
         mPresenter = null;
     }
 

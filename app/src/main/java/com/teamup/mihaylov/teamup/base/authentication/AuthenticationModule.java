@@ -2,7 +2,10 @@ package com.teamup.mihaylov.teamup.base.authentication;
 
 import android.content.Context;
 
+import com.teamup.mihaylov.teamup.base.contracts.CurrentActivityProvider;
+import com.teamup.mihaylov.teamup.base.data.LocalUsersData;
 import com.teamup.mihaylov.teamup.base.data.RemoteUsersData;
+import com.teamup.mihaylov.teamup.base.models.DaoUser;
 import com.teamup.mihaylov.teamup.base.models.User;
 
 import javax.inject.Named;
@@ -16,7 +19,16 @@ import dagger.Provides;
 
 @Module
 public class AuthenticationModule {
-    @Provides AuthenticationProvider providesAuthentication(Context context, RemoteUsersData<User> usersData) {
-        return new AuthenticationProvider(context, usersData);
+    @Provides
+    AuthenticationProvider providesAuthentication(
+            Context context,
+            RemoteUsersData<User> remoteUsersData,
+            LocalUsersData<DaoUser> localUsersData,
+            CurrentActivityProvider currentActivityProvider) {
+        return new AuthenticationProvider(
+                context,
+                remoteUsersData,
+                localUsersData,
+                currentActivityProvider);
     }
 }

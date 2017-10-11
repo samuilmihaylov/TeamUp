@@ -21,7 +21,7 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
-import com.teamup.mihaylov.teamup.Events.ListEvents.ListEventsActivity;
+import com.teamup.mihaylov.teamup.Events.ListEvents.ListAllEvents.ListEventsActivity;
 import com.teamup.mihaylov.teamup.R;
 
 import java.util.ArrayList;
@@ -315,20 +315,25 @@ public class CreateEventView extends Fragment implements CreateEventContracts.Vi
 
     @Override
     public void onResume() {
-        mPresenter.subscribe(this);
         super.onResume();
+        mPresenter.subscribe(this);
     }
 
     @Override
     public void onPause() {
-        mPresenter.unsubscribe();
         super.onPause();
+        if (mPresenter != null) {
+            mPresenter.unsubscribe();
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mPresenter.unsubscribe();
+        if (mPresenter != null) {
+            mPresenter.unsubscribe();
+        }
+
         mPresenter = null;
     }
 

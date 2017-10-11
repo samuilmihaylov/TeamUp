@@ -1,24 +1,15 @@
 package com.teamup.mihaylov.teamup.Events.ListEvents.ListCreatedEvents;
 
 import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
-import com.teamup.mihaylov.teamup.base.data.LocalEventsData;
 import com.teamup.mihaylov.teamup.base.data.RemoteUsersData;
 import com.teamup.mihaylov.teamup.base.models.Event;
 import com.teamup.mihaylov.teamup.base.models.User;
+import com.teamup.mihaylov.teamup.base.utils.schedulers.BaseSchedulerProvider;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by samui on 6.10.2017 г..
@@ -27,6 +18,7 @@ import io.reactivex.schedulers.Schedulers;
 public class ListCreatedEventsPresenter implements ListCreatedEventsContracts.Presenter {
     private final RemoteUsersData<User> mUsersData;
     private final AuthenticationProvider mAuth;
+    private final BaseSchedulerProvider mScheduleProvider;
 
     private ListCreatedEventsContracts.View mView;
     private ListCreatedEventsContracts.ViewState mViewState;
@@ -35,9 +27,11 @@ public class ListCreatedEventsPresenter implements ListCreatedEventsContracts.Pr
 
     public ListCreatedEventsPresenter(
             AuthenticationProvider authProvider,
-            RemoteUsersData<User> usersData) {
+            RemoteUsersData<User> usersData,
+            BaseSchedulerProvider schedulerProvider) {
         mUsersData = usersData;
         mAuth = authProvider;
+        mScheduleProvider = schedulerProvider;
     }
 
     @Override
@@ -51,8 +45,8 @@ public class ListCreatedEventsPresenter implements ListCreatedEventsContracts.Pr
         Observable<List<Event>> observable = mUsersData.getCreatedEvents(mAuth.getUserId());
 
         observable
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(mScheduleProvider.io())
+                .observeOn(mScheduleProvider.ui())
                 .subscribe(new Consumer<List<Event>>() {
                     @Override
                     public void accept(List<Event> events) throws Exception {

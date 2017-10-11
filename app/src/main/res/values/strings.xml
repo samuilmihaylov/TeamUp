@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">TeamUp</string>
     <string name="moto_text">Let the games begin! </string>
-    <string name="welcome_events_list_link">Your teammates are waiting for you! Click here and...</string>
+    <string name="welcome_events_list_link">Your teammates are waiting for you!</string>
     <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
 
     <!-- Buttons -->

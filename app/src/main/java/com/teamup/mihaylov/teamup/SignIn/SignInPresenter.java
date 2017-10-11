@@ -1,10 +1,15 @@
 package com.teamup.mihaylov.teamup.SignIn;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
+import com.teamup.mihaylov.teamup.base.data.LocalUsersData;
+import com.teamup.mihaylov.teamup.base.utils.schedulers.BaseSchedulerProvider;
 
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by samui on 3.10.2017 г..
@@ -12,11 +17,15 @@ import io.reactivex.Observable;
 
 class SignInPresenter implements SignInContracts.Presenter {
 
+    private final BaseSchedulerProvider mScheduleProvider;
     private SignInContracts.View mView;
     private AuthenticationProvider mAuthenticationProvider;
 
     @Inject
-    public SignInPresenter() {
+    public SignInPresenter(AuthenticationProvider authProvider,
+                           BaseSchedulerProvider schedulerProvider) {
+        mAuthenticationProvider = authProvider;
+        mScheduleProvider = schedulerProvider;
     }
 
     @Override
@@ -30,12 +39,41 @@ class SignInPresenter implements SignInContracts.Presenter {
     }
 
     @Override
-    public void setAuth(AuthenticationProvider authProvider) {
-        mAuthenticationProvider = authProvider;
+    public Observable<Boolean> signInWithEmail(String email, String password) {
+        return mAuthenticationProvider.signInWithEmail(email, password);
     }
 
     @Override
-    public Observable<Boolean> signInWithEmail(String email, String password) {
-        return mAuthenticationProvider.signInWithEmail(email, password);
+    public void signInWithGoogle() {
+        mAuthenticationProvider.signInWithGoogle();
+    }
+
+    @Override
+    public GoogleApiClient getGoogleApi() {
+        return mAuthenticationProvider.getGoogleApi();
+    }
+
+    @Override
+    public void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+
+        Observable<Boolean> observable = mAuthenticationProvider
+                .firebaseAuthWithGoogle(account);
+
+        observable
+                .subscribeOn(mScheduleProvider.io())
+                .observeOn(mScheduleProvider.ui())
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean isSuccessful) throws Exception {
+                        if(isSuccessful){
+                            mView.navigate();
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        throwable.printStackTrace();
+                    }
+                });
     }
 }

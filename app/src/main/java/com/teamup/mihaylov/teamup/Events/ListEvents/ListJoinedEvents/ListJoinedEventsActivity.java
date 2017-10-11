@@ -1,6 +1,5 @@
 package com.teamup.mihaylov.teamup.Events.ListEvents.ListJoinedEvents;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.teamup.mihaylov.teamup.DrawerNavMain.DrawerNavMainActivity;

@@ -5,9 +5,15 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.teamup.mihaylov.teamup.R;
 import com.teamup.mihaylov.teamup.TeamUpApplication;
+import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
+import com.teamup.mihaylov.teamup.base.data.LocalUsersData;
+import com.teamup.mihaylov.teamup.base.models.DaoUser;
+
+import javax.inject.Inject;
 
 import dagger.android.support.DaggerAppCompatActivity;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -27,8 +33,7 @@ public class BaseActivity extends DaggerAppCompatActivity {
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/Ubuntu-Medium.ttf")
                 .setFontAttrId(R.attr.fontPath)
-                .build()
-        );
+                .build());
     }
 
     @Override

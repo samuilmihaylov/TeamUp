@@ -16,7 +16,7 @@ import com.teamup.mihaylov.teamup.Events.ListEvents.ListCreatedEvents.ListCreate
 import com.teamup.mihaylov.teamup.Events.ListEvents.ListJoinedEvents.ListJoinedEventsActivity;
 import com.teamup.mihaylov.teamup.R;
 
-public class GoogleProfileView extends Fragment implements UserProfileContracts.View{
+public class GoogleProfileView extends Fragment implements UserProfileContracts.View {
 
     private Button btnSignOut;
 
@@ -61,7 +61,7 @@ public class GoogleProfileView extends Fragment implements UserProfileContracts.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.fragment_google_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_google_profile, container, false);
 
         Spinner spinner = (Spinner) view.findViewById(R.id.my_collections);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
@@ -90,13 +90,18 @@ public class GoogleProfileView extends Fragment implements UserProfileContracts.
     @Override
     public void onPause() {
         super.onPause();
-        mPresenter.unsubscribe();
+
+        if (mPresenter != null) {
+            mPresenter.unsubscribe();
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mPresenter.unsubscribe();
-        mPresenter = null;
+
+        if (mPresenter != null) {
+            mPresenter.unsubscribe();
+        }
     }
 }

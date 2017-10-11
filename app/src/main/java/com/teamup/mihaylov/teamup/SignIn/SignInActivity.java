@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.util.LogPrinter;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -47,19 +48,12 @@ public class SignInActivity extends DrawerNavMainActivity {
         mView = SignInView.newInstance();
         mView.setPresenter(mPresenter);
 
-        mAuthProvider.setActivity(this);
-        mGoogleApiClient = mAuthProvider.getGoogleApi();
-        mPresenter.setAuth(mAuthProvider);
+        mGoogleApiClient = mPresenter.getGoogleApi();
 
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content_container, mView)
                 .commit();
-    }
-
-    public void signInWithGoogle() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     @Override
@@ -69,26 +63,9 @@ public class SignInActivity extends DrawerNavMainActivity {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
                 GoogleSignInAccount account = result.getSignInAccount();
-                firebaseAuthWithGoogle(account);
+                mPresenter.firebaseAuthWithGoogle(account);
             }
         }
-    }
-
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        final AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mAuthProvider.getFirebaseInstance().signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Intent intent = new Intent(getApplicationContext(), DrawerNavMainActivity.class);
-                            startActivity(intent);
-                        } else {
-                            Intent intent = new Intent(getApplicationContext(), DrawerNavMainActivity.class);
-                            startActivity(intent);
-                        }
-                    }
-                });
     }
 
     @Override
@@ -102,6 +79,12 @@ public class SignInActivity extends DrawerNavMainActivity {
         super.onStop();
         mGoogleApiClient.disconnect();
         mView.hideLoading();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mGoogleApiClient.disconnect();
     }
 
     @Override

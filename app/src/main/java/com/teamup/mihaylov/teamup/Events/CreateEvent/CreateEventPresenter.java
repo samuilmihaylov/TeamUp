@@ -18,9 +18,10 @@ public class CreateEventPresenter implements CreateEventContracts.Presenter {
 
     private final RemoteEventsData<Event> mRemoteEventsData;
     private final AuthenticationProvider mAuthProvider;
+    private final RemoteUsersData<User> mRemoteUsersData;
+
     private final String mCurrentUserName;
     private final String mCurrentUserId;
-    private final RemoteUsersData<User> mRemoteUsersData;
 
     private CreateEventContracts.View mView;
 

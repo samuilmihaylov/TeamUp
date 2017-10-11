@@ -2,21 +2,28 @@ package com.teamup.mihaylov.teamup.base.authentication;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.teamup.mihaylov.teamup.base.contracts.CurrentActivityProvider;
+import com.teamup.mihaylov.teamup.base.data.LocalUsersData;
 import com.teamup.mihaylov.teamup.base.data.RemoteUsersData;
+import com.teamup.mihaylov.teamup.base.models.DaoUser;
 import com.teamup.mihaylov.teamup.base.models.User;
 
 import javax.inject.Inject;
@@ -34,29 +41,30 @@ import io.reactivex.schedulers.Schedulers;
 
 public class AuthenticationProvider implements FirebaseAuth.AuthStateListener, GoogleApiClient.OnConnectionFailedListener {
 
-    private final RemoteUsersData<User> mUsersData;
+    private static final int RC_SIGN_IN = 9001;
+    private final RemoteUsersData<User> mRemoteUsersData;
+    private final CurrentActivityProvider mCurrentActivityProvider;
+    private final LocalUsersData mLocalUsersData;
     private FirebaseUser mUser;
     private FirebaseAuth mAuth;
-    private GoogleApiClient mGoogleApiClient;
 
     private Context mContext;
     private Activity mActivity;
+    private GoogleApiClient mGoogleApiClient;
 
     @Inject
-    AuthenticationProvider(Context context, RemoteUsersData<User> usersData) {
+    AuthenticationProvider(
+            Context context,
+            RemoteUsersData<User> usersData,
+            LocalUsersData localUsersData,
+            CurrentActivityProvider currentActivityProvider) {
+
         mContext = context;
-        mUsersData = usersData;
+        mRemoteUsersData = usersData;
+        mLocalUsersData = localUsersData;
+        mCurrentActivityProvider = currentActivityProvider;
 
         mAuth = FirebaseAuth.getInstance();
-
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("695242278170-tn551iph1cuf7jpvbpl2tl4c51b1ufaq.apps.googleusercontent.com")
-                .requestEmail()
-                .build();
-
-        mGoogleApiClient = new GoogleApiClient.Builder(mContext)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
 
         mAuth.addAuthStateListener(this);
     }
@@ -97,10 +105,6 @@ public class AuthenticationProvider implements FirebaseAuth.AuthStateListener, G
         return mAuth.getCurrentUser().getUid();
     }
 
-    public String getUserDisplayName() {
-        return mAuth.getCurrentUser().getDisplayName();
-    }
-
     public Observable<Boolean> updateUserProfile(final String displayName) {
         return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
@@ -111,18 +115,18 @@ public class AuthenticationProvider implements FirebaseAuth.AuthStateListener, G
                         .build();
 
                 String uid = mUser.getUid();
-                mUsersData.setKey(uid);
-                mUsersData.add(new User(uid, displayName));
+                mRemoteUsersData.setKey(uid);
+                mRemoteUsersData.add(new User(uid, displayName));
 
-                mUser.updateProfile(profileUpdates).addOnCompleteListener(mActivity, new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    emitter.onNext(true);
-                                    emitter.onComplete();
-                                }
-                            }
-                        });
+                mUser.updateProfile(profileUpdates).addOnCompleteListener(mCurrentActivityProvider.getCurrentActivity(), new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            emitter.onNext(true);
+                            emitter.onComplete();
+                        }
+                    }
+                });
             }
         });
     }
@@ -174,16 +178,49 @@ public class AuthenticationProvider implements FirebaseAuth.AuthStateListener, G
             @Override
             public void subscribe(final ObservableEmitter<Boolean> emitter) throws Exception {
                 mAuth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(mActivity, new OnCompleteListener<AuthResult>() {
+                        .addOnCompleteListener(mCurrentActivityProvider.getCurrentActivity(), new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
+                                    FirebaseUser user = task.getResult().getUser();
                                     Toast.makeText(mContext, "signInWithEmail:success", Toast.LENGTH_SHORT).show();
                                     emitter.onNext(true);
                                 } else {
                                     Toast.makeText(mContext, "signInWithEmail:failure", Toast.LENGTH_SHORT).show();
                                     emitter.onNext(false);
                                 }
+
+                                emitter.onComplete();
+                            }
+                        });
+            }
+        });
+    }
+
+    public void signInWithGoogle() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        mCurrentActivityProvider.getCurrentActivity().startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    public Observable<Boolean> firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(final ObservableEmitter<Boolean> emitter) throws Exception {
+                final AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+                mAuth.signInWithCredential(credential)
+                        .addOnCompleteListener(mCurrentActivityProvider.getCurrentActivity(), new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    FirebaseUser user = task.getResult().getUser();
+                                    Toast.makeText(mContext, "signInWithGoogle:success", Toast.LENGTH_SHORT).show();
+                                    emitter.onNext(true);
+                                } else {
+                                    Toast.makeText(mContext, "signInWithGoogle:failure", Toast.LENGTH_SHORT).show();
+                                    emitter.onNext(false);
+                                }
+
+                                emitter.onComplete();
                             }
                         });
             }
@@ -206,6 +243,16 @@ public class AuthenticationProvider implements FirebaseAuth.AuthStateListener, G
     }
 
     public GoogleApiClient getGoogleApi() {
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("695242278170-tn551iph1cuf7jpvbpl2tl4c51b1ufaq.apps.googleusercontent.com")
+                .requestEmail()
+                .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(mContext)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
         return mGoogleApiClient;
     }
 
@@ -241,13 +288,13 @@ public class AuthenticationProvider implements FirebaseAuth.AuthStateListener, G
 
     public void signOut() {
         mAuth.signOut();
+        mLocalUsersData.clear();
         Toast.makeText(mContext, "Signed Out", Toast.LENGTH_SHORT).show();
     }
 
     public void googleSignOut() {
         signOut();
         Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient);
-        Toast.makeText(mContext, "Signed Out", Toast.LENGTH_SHORT).show();
     }
 
     @Override

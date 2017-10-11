@@ -1,5 +1,8 @@
 package com.teamup.mihaylov.teamup.SignIn;
 
+import com.teamup.mihaylov.teamup.base.authentication.AuthenticationProvider;
+import com.teamup.mihaylov.teamup.base.utils.schedulers.BaseSchedulerProvider;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -10,7 +13,9 @@ import dagger.Provides;
 @Module
 public class SignInModule {
     @Provides
-    SignInContracts.Presenter provideSignInPresenter() {
-        return new SignInPresenter();
+    SignInContracts.Presenter provideSignInPresenter(
+            AuthenticationProvider authProvider,
+            BaseSchedulerProvider schedulerProvider) {
+        return new SignInPresenter(authProvider, schedulerProvider);
     }
 }
